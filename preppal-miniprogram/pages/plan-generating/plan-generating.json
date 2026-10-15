@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "生成教案草稿",
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index"
+  }
+}

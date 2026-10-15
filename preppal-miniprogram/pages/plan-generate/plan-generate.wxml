@@ -1,0 +1,146 @@
+<view class="pp-page pp-page--with-bar">
+  <view class="steps-row">
+    <view class="steps-row__item">
+      <pp-status-chip type="load">1</pp-status-chip>
+      <text class="steps-row__label steps-row__label--on">填写信息</text>
+    </view>
+    <view class="steps-row__line"></view>
+    <view class="steps-row__item">
+      <pp-status-chip type="neutral">2</pp-status-chip>
+      <text class="steps-row__label">生成草稿</text>
+    </view>
+    <view class="steps-row__line"></view>
+    <view class="steps-row__item">
+      <pp-status-chip type="neutral">3</pp-status-chip>
+      <text class="steps-row__label">编辑定稿</text>
+    </view>
+  </view>
+
+  <view class="pp-title">生成教案</view>
+  <view class="pp-sub">填写教学信息，PrepPal 会结合本课程资料生成可编辑的教案草稿。</view>
+
+  <view class="pp-card gen__card">
+    <view class="pp-field">
+      <view class="pp-field__label">所属课程</view>
+      <view class="pp-picker" bindtap="onOpenCourseSheet">
+        <text>{{course.name}}</text>
+        <view class="gen__picker-action">
+          <text>切换</text>
+          <pp-icon name="chev" size="26rpx" color="#8a94a6" />
+        </view>
+      </view>
+    </view>
+
+    <view class="pp-field {{errors.topic ? 'pp-field--invalid' : ''}}" id="field-topic">
+      <view class="pp-field__label">教学主题 <text class="pp-field__req">*</text></view>
+      <input
+        class="pp-input"
+        value="{{form.topic}}"
+        placeholder="例如：牛顿第二定律"
+        placeholder-class="gen__ph"
+        maxlength="40"
+        data-field="topic"
+        bindinput="onInput"
+      />
+      <view class="pp-field__err" wx:if="{{errors.topic}}">{{errors.topic}}</view>
+    </view>
+
+    <view class="pp-field {{errors.targetAudience ? 'pp-field--invalid' : ''}}" id="field-targetAudience">
+      <view class="pp-field__label">授课对象 <text class="pp-field__req">*</text></view>
+      <input
+        class="pp-input"
+        value="{{form.targetAudience}}"
+        placeholder="例如：大学一年级理工科"
+        placeholder-class="gen__ph"
+        maxlength="30"
+        data-field="targetAudience"
+        bindinput="onInput"
+      />
+      <view class="pp-field__err" wx:if="{{errors.targetAudience}}">{{errors.targetAudience}}</view>
+    </view>
+
+    <view class="pp-field {{errors.classDuration ? 'pp-field--invalid' : ''}}" id="field-classDuration">
+      <view class="pp-field__label">课时长 <text class="pp-field__req">*</text></view>
+      <view class="gen__duration">
+        <input
+          class="pp-input"
+          type="number"
+          value="{{form.classDuration}}"
+          placeholder="例如：45"
+          placeholder-class="gen__ph"
+          maxlength="3"
+          data-field="classDuration"
+          bindinput="onInput"
+        />
+        <text class="pp-field__suffix">分钟</text>
+      </view>
+      <view class="pp-field__err" wx:if="{{errors.classDuration}}">{{errors.classDuration}}</view>
+    </view>
+
+    <view class="pp-field {{errors.teachingType ? 'pp-field--invalid' : ''}}" id="field-teachingType">
+      <view class="pp-field__label">教学类型 <text class="pp-field__req">*</text></view>
+      <view class="pp-seg">
+        <view
+          wx:for="{{types}}"
+          wx:key="*this"
+          class="pp-seg__item {{form.teachingType === item ? 'pp-seg__item--on' : ''}}"
+          data-value="{{item}}"
+          bindtap="onPickType"
+        >
+          {{item}}
+        </view>
+      </view>
+      <view class="pp-field__err" wx:if="{{errors.teachingType}}">{{errors.teachingType}}</view>
+    </view>
+
+    <view class="pp-field" style="margin-bottom: 0">
+      <view class="pp-field__label">自定义教学目标 <text class="pp-field__opt">选填</text></view>
+      <textarea
+        class="pp-textarea"
+        value="{{form.customObjectives}}"
+        placeholder="例如：希望学生能独立完成受力分析并解释生活中的加速度现象。"
+        placeholder-class="gen__ph"
+        maxlength="200"
+        data-field="customObjectives"
+        bindinput="onInput"
+      />
+    </view>
+  </view>
+
+  <view class="pp-notice pp-notice--info gen__hint">
+    <view class="pp-notice__ic">
+      <pp-icon name="info" size="32rpx" color="#2b4acb" />
+    </view>
+    <view class="pp-notice__text">
+      <block wx:if="{{okMaterials.length}}">
+        将优先参考本课程已上传的教学资料（{{okMaterials[0].filename}}{{okMaterials.length > 1 ? ' 等 ' + okMaterials.length + ' 份' : ''}}）。
+      </block>
+      <block wx:else>本课程暂无可用资料，将基于通用知识生成。上传相关讲义后重新生成，即可获得可追溯的引用说明。</block>
+    </view>
+  </view>
+
+  <view class="pp-bottom-bar">
+    <view
+      class="pp-btn pp-btn--primary pp-btn--block {{submitting ? 'pp-btn--disabled' : ''}}"
+      hover-class="{{submitting ? '' : 'pp-btn--hover'}}"
+      bindtap="onSubmit"
+    >
+      <view wx:if="{{submitting}}" class="pp-spinner"></view>
+      <pp-icon wx:else name="spark" size="32rpx" color="#ffffff" />
+      <text>生成教案草稿</text>
+    </view>
+    <view class="pp-bar-hint">预计 1–2 分钟，生成后可随时编辑</view>
+  </view>
+</view>
+
+<van-action-sheet
+  show="{{sheetShow}}"
+  actions="{{courseActions}}"
+  title="切换所属课程"
+  cancel-text="取消"
+  round
+  z-index="2100"
+  bind:select="onCourseSelect"
+  bind:close="onCourseSheetClose"
+  bind:cancel="onCourseSheetClose"
+/>

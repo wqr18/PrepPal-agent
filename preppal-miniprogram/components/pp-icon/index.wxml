@@ -1,0 +1,1 @@
+<van-icon name="{{vantName}}" size="{{size}}" color="{{color}}" custom-class="pp-icon" />

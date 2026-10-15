@@ -1,0 +1,47 @@
+<view class="pp-page pp-page--bare">
+  <!-- 生成中 -->
+  <view class="gen-wrap" wx:if="{{stage === 'running'}}">
+    <view class="orb">AI</view>
+    <view class="gen-wrap__title">正在检索相关资料并生成教案</view>
+    <view class="gen-wrap__sub">
+      请稍候…已按“{{topic}}”整理本课程的教学资料
+    </view>
+
+    <view class="pp-progress gen-wrap__progress">
+      <view class="pp-progress__bar" style="width: {{progress}}%"></view>
+    </view>
+
+    <view class="gen-steps">
+      <view class="gen-step gen-step--{{item.state}}" wx:for="{{steps}}" wx:key="text">
+        <view class="gen-step__dot">
+          <pp-icon wx:if="{{item.state === 'done'}}" name="check" size="22rpx" color="#ffffff" />
+        </view>
+        <text class="gen-step__text">{{item.text}}</text>
+      </view>
+    </view>
+
+    <view class="gen-refs">本次参考：{{refsText}}</view>
+  </view>
+
+  <!-- 超时失败 -->
+  <view class="gen-wrap" wx:else>
+    <view class="orb orb--fail">!</view>
+    <view class="gen-wrap__title">生成超时，可重试</view>
+    <view class="gen-wrap__sub">{{failMessage}}</view>
+
+    <view class="gen-fail__actions">
+      <view class="pp-btn pp-btn--primary pp-btn--block" hover-class="pp-btn--hover" bindtap="onRetry">
+        <pp-icon name="spark" size="32rpx" color="#ffffff" />
+        <text>重新生成</text>
+      </view>
+      <view class="pp-btn pp-btn--ghost pp-btn--block" hover-class="pp-btn--hover" bindtap="onBack">
+        <text>返回修改教学信息</text>
+      </view>
+    </view>
+
+    <view class="gen-refs">
+      <view>本次参考：{{refsText}}</view>
+      <view>若多次失败，可减少资料份数后重试。</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,61 @@
+.home__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 12rpx 4rpx 0;
+}
+
+.home__head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.home__greet {
+  font-size: 42rpx;
+  font-weight: 700;
+  letter-spacing: -0.5rpx;
+}
+
+.home__sub {
+  font-size: 24rpx;
+  color: var(--pp-ink-3);
+  line-height: 1.6;
+  margin-top: 10rpx;
+}
+
+.home__steps {
+  padding: 28rpx 28rpx 12rpx;
+}
+
+.home__step {
+  display: flex;
+  gap: 18rpx;
+  align-items: flex-start;
+  padding: 18rpx 0;
+}
+
+.home__step + .home__step {
+  border-top: 1rpx dashed var(--pp-line);
+}
+
+.home__step-no {
+  flex: 0 0 88rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: var(--pp-brand-50);
+  color: var(--pp-brand);
+  font-size: 21rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rpx;
+}
+
+.home__step-text {
+  flex: 1;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: var(--pp-ink-2);
+}

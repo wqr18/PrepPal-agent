@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "课程",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index",
+    "pp-empty-state": "/components/pp-empty-state/index"
+  }
+}

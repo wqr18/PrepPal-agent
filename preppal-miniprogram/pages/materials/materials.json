@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "教学资料",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index",
+    "pp-status-chip": "/components/pp-status-chip/index",
+    "pp-empty-state": "/components/pp-empty-state/index"
+  }
+}

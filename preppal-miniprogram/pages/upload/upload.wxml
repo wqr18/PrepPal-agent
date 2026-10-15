@@ -1,0 +1,144 @@
+<view class="pp-page pp-page--with-bar">
+  <view
+    class="dropzone"
+    hover-class="dropzone--hover"
+    wx:if="{{stage === 'pick' || stage === 'error'}}"
+    bindtap="onTapDropzone"
+  >
+    <view class="dropzone__ico">
+      <pp-icon name="upload" size="48rpx" color="#2b4acb" />
+    </view>
+    <view class="dropzone__title">选择教学资料文件</view>
+    <view class="dropzone__desc">仅支持 TXT、MD，单个文件 ≤ {{maxSizeText}}</view>
+  </view>
+
+  <!-- 已选中的文件 -->
+  <view class="pp-card upload__file" wx:if="{{picked}}">
+    <view class="upload__file-top">
+      <view class="pp-file-badge pp-file-badge--big pp-file-badge--{{picked.ext === 'MD' ? 'md' : 'txt'}}">
+        {{picked.ext}}
+      </view>
+      <view class="pp-li__grow">
+        <view class="upload__file-name">{{picked.filename}}</view>
+        <view class="pp-li__meta">
+          <text>{{picked.sizeText}}</text>
+        </view>
+        <view class="pp-li__meta">
+          <text>所属课程：{{courseName || '—'}}</text>
+        </view>
+      </view>
+      <view
+        class="pp-btn pp-btn--icon"
+        hover-class="pp-btn--hover"
+        wx:if="{{stage === 'pick' || stage === 'error'}}"
+        bindtap="onClearPick"
+      >
+        <pp-icon name="trash" size="32rpx" color="#8a94a6" />
+      </view>
+    </view>
+
+    <view class="pp-notice pp-notice--warn upload__notice" wx:if="{{stage === 'error'}}">
+      <view class="pp-notice__ic">
+        <pp-icon name="warn" size="32rpx" color="#c08a22" />
+      </view>
+      <view class="pp-notice__text">
+        单个文件不超过 <text class="upload__strong">{{maxSizeText}}</text>，当前为 {{picked.sizeText}}。请压缩内容或拆分为多份后再上传。
+      </view>
+    </view>
+
+    <view class="upload__progress" wx:if="{{stage === 'uploading'}}">
+      <view class="upload__progress-head">
+        <text>{{progressText}}</text>
+        <text>{{progress}}%</text>
+      </view>
+      <view class="pp-progress">
+        <view class="pp-progress__bar" style="width: {{progress}}%"></view>
+      </view>
+      <view class="upload__progress-hint">上传完成后会自动解析，无需手动操作。</view>
+    </view>
+
+    <view class="pp-notice pp-notice--ok upload__notice" wx:if="{{stage === 'done'}}">
+      <view class="pp-notice__ic">
+        <pp-icon name="check" size="32rpx" color="#12a150" />
+      </view>
+      <view class="pp-notice__text">资料已解析，可用于生成教案。生成教案时会优先参考这份资料。</view>
+    </view>
+
+    <view class="pp-notice pp-notice--warn upload__notice" wx:if="{{stage === 'failed'}}">
+      <view class="pp-notice__ic">
+        <pp-icon name="warn" size="32rpx" color="#c08a22" />
+      </view>
+      <view class="pp-notice__text">解析失败：{{failReason}}</view>
+    </view>
+  </view>
+
+  <!-- mock 模式下的示例文件列表 -->
+  <view class="pp-card upload__samples" wx:if="{{useMock && (stage === 'pick' || stage === 'error')}}">
+    <view class="upload__samples-head">从本机选择（原型示例文件）</view>
+    <view
+      class="pp-li pp-li--tap"
+      wx:for="{{samples}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onPickSample"
+    >
+      <view class="pp-file-badge pp-file-badge--{{item.ext === 'MD' ? 'md' : 'txt'}}">{{item.ext}}</view>
+      <view class="pp-li__grow">
+        <view class="upload__sample-name">{{item.filename}}</view>
+        <view class="pp-li__meta">
+          <text>{{item.sizeText}}</text>
+          <text wx:if="{{item.note}}">·</text>
+          <text wx:if="{{item.note}}">{{item.note}}</text>
+        </view>
+      </view>
+      <pp-status-chip type="load" wx:if="{{pickedKey === item.key}}">已选择</pp-status-chip>
+      <view class="pp-chev" wx:else>
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+  </view>
+
+  <view class="pp-bottom-bar">
+    <block wx:if="{{stage === 'pick' || stage === 'error'}}">
+      <view
+        class="pp-btn pp-btn--primary pp-btn--block {{picked ? '' : 'pp-btn--disabled'}}"
+        hover-class="{{picked ? 'pp-btn--hover' : ''}}"
+        bindtap="onUpload"
+      >
+        <pp-icon name="upload" size="32rpx" color="#ffffff" />
+        <text>上传并解析</text>
+      </view>
+      <view class="pp-bar-hint">{{picked ? '仅支持 TXT、MD，≤ ' + maxSizeText : '请先选择要上传的文件'}}</view>
+    </block>
+
+    <block wx:elif="{{stage === 'uploading'}}">
+      <view class="pp-btn pp-btn--primary pp-btn--block pp-btn--disabled">
+        <view class="pp-spinner"></view>
+        <text>正在上传…</text>
+      </view>
+      <view class="pp-bar-hint">请保持页面开启，解析完成后会给出提示</view>
+    </block>
+
+    <block wx:elif="{{stage === 'done'}}">
+      <view class="pp-bottom-bar__row">
+        <view class="pp-btn pp-btn--ghost" hover-class="pp-btn--hover" bindtap="onGoMaterials">
+          <text>返回教学资料</text>
+        </view>
+        <view class="pp-btn pp-btn--primary" hover-class="pp-btn--hover" bindtap="onGoGenerate">
+          <text>去生成教案</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="pp-bottom-bar__row">
+        <view class="pp-btn pp-btn--ghost" hover-class="pp-btn--hover" bindtap="onClearPick">
+          <text>重新选择</text>
+        </view>
+        <view class="pp-btn pp-btn--primary" hover-class="pp-btn--hover" bindtap="onUpload">
+          <text>重试上传</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

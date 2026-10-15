@@ -1,0 +1,131 @@
+<view class="pp-page pp-page--tab">
+  <view class="home__head">
+    <view class="home__head-text">
+      <view class="home__greet">{{greeting}}，{{userName}}</view>
+      <view class="home__sub">
+        {{empty ? '先创建一门课程，PrepPal 才能结合你的资料备课' : '今天也把备课交给 PrepPal'}}
+      </view>
+    </view>
+    <view class="pp-avatar" bindtap="onGoMe">{{avatarText}}</view>
+  </view>
+
+  <view class="pp-cta">
+    <view class="pp-cta__top">
+      <view class="pp-cta__title">开始生成教案</view>
+      <view class="pp-cta__badge">约 2 分钟完成初稿</view>
+    </view>
+    <view class="pp-cta__desc">结合课程资料，快速生成可编辑教案</view>
+    <view class="pp-btn pp-btn--block pp-cta__btn" hover-class="pp-btn--hover" bindtap="onStartGenerate">
+      <pp-icon name="spark" size="34rpx" color="#1b2f87" />
+      <text>开始生成教案</text>
+    </view>
+  </view>
+
+  <!-- 空状态：新用户引导 -->
+  <block wx:if="{{empty}}">
+    <view class="pp-card pp-sec">
+      <pp-empty-state
+        icon="empty-course"
+        title="还没有课程"
+        desc="创建第一门课程，上传 txt / md 教学资料，就能生成带来源说明的教案草稿。"
+        actionText="创建第一门课程"
+        bind:action="onGoCreateCourse"
+      />
+    </view>
+
+    <view class="pp-sec">
+      <view class="pp-card home__steps">
+        <view class="pp-sec__head">
+          <view class="pp-sec__title">三步完成备课</view>
+        </view>
+        <view class="home__step" wx:for="{{steps}}" wx:key="*this">
+          <view class="home__step-no">0{{index + 1}}</view>
+          <view class="home__step-text">{{item}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 正常状态 -->
+  <block wx:else>
+    <view class="pp-stat-row">
+      <view class="pp-stat">
+        <view class="pp-stat__n">{{stats.courses}}<text class="pp-stat__unit">门</text></view>
+        <view class="pp-stat__label">我的课程</view>
+      </view>
+      <view class="pp-stat">
+        <view class="pp-stat__n pp-stat__n--accent">{{stats.drafts}}<text class="pp-stat__unit">份</text></view>
+        <view class="pp-stat__label">教案草稿</view>
+      </view>
+      <view class="pp-stat">
+        <view class="pp-stat__n">{{stats.finals}}<text class="pp-stat__unit">份</text></view>
+        <view class="pp-stat__label">已定稿</view>
+      </view>
+    </view>
+
+    <view class="pp-sec">
+      <view class="pp-sec__head">
+        <view class="pp-sec__title">最近使用课程</view>
+        <view class="pp-sec__action" bindtap="onGoCourses">全部课程</view>
+      </view>
+      <view
+        class="pp-card pp-li pp-li--tap"
+        wx:if="{{recentCourse}}"
+        data-id="{{recentCourse.id}}"
+        bindtap="onCourseTap"
+      >
+        <view class="pp-file-badge pp-file-badge--big pp-file-badge--plain">
+          <pp-icon name="book" size="40rpx" color="#2b4acb" />
+        </view>
+        <view class="pp-li__grow">
+          <view class="pp-li__title">
+            {{recentCourse.name}}
+            <pp-status-chip type="neutral">最近使用</pp-status-chip>
+          </view>
+          <view class="pp-li__meta">
+            {{recentCourse.materialCount}} 份资料 ｜ {{recentCourse.planCount}} 份教案 ｜ {{recentCourse.updatedText}}
+          </view>
+        </view>
+        <view class="pp-chev">
+          <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+        </view>
+      </view>
+    </view>
+
+    <view class="pp-sec">
+      <view class="pp-sec__head">
+        <view class="pp-sec__title">最近教案</view>
+        <view class="pp-sec__action" bindtap="onGoCoursePlans">查看全部</view>
+      </view>
+      <view class="pp-card">
+        <view
+          class="pp-li pp-li--tap"
+          wx:for="{{recentPlans}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onPlanTap"
+        >
+          <view class="pp-li__grow">
+            <view class="pp-li__title">
+              {{item.title}}
+              <pp-status-chip type="{{item.isDraft ? 'draft' : 'final'}}" dot />
+            </view>
+            <view class="pp-li__meta">
+              <text>{{item.courseName}}</text>
+              <text>·</text>
+              <text>{{item.topic}}</text>
+              <text>·</text>
+              <text>{{item.updatedText}}</text>
+            </view>
+          </view>
+          <view class="pp-chev">
+            <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+          </view>
+        </view>
+        <view class="pp-li" wx:if="{{!recentPlans.length}}">
+          <view class="pp-li__grow pp-muted">这门课程还没有教案，去生成第一份吧。</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

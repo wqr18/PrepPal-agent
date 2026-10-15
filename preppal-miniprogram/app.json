@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/home/home",
+    "pages/courses/courses",
+    "pages/me/me",
+    "pages/course-edit/course-edit",
+    "pages/course-detail/course-detail",
+    "pages/materials/materials",
+    "pages/upload/upload",
+    "pages/plan-generate/plan-generate",
+    "pages/plan-generating/plan-generating",
+    "pages/plan-detail/plan-detail",
+    "pages/plans/plans"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "PrepPal 智能备课",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f3f6fc",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8a94a6",
+    "selectedColor": "#2b4acb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/courses/courses",
+        "text": "课程"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-switch": "@vant/weapp/switch/index",
+    "pp-icon": "/components/pp-icon/index",
+    "pp-status-chip": "/components/pp-status-chip/index",
+    "pp-empty-state": "/components/pp-empty-state/index"
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
+

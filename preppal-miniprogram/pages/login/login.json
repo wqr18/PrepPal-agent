@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index"
+  }
+}

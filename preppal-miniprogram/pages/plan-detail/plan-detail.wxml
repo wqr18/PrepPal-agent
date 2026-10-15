@@ -1,0 +1,299 @@
+<view class="pp-page pp-page--with-bar" wx:if="{{plan}}">
+  <view class="plan__head">
+    <view class="plan__head-text">
+      <view class="plan__title">
+        {{plan.title}}
+        <pp-status-chip type="{{plan.isDraft ? 'draft' : 'final'}}" dot />
+      </view>
+      <view class="plan__meta">
+        {{plan.courseName}} · {{plan.topic}} · {{plan.classDuration}} 分钟 · {{plan.targetAudience}}
+      </view>
+    </view>
+    <view class="pp-btn pp-btn--icon" hover-class="pp-btn--hover" bindtap="onMore">
+      <pp-icon name="dots" size="34rpx" color="#8a94a6" />
+    </view>
+  </view>
+
+  <!-- 编辑状态提示 -->
+  <view class="pp-edit-hint" wx:if="{{editing}}">
+    <pp-icon name="edit" size="28rpx" color="#2b4acb" />
+    <text>编辑中：修改任意内容后点击底部「保存草稿」或「标记为定稿」</text>
+    <text class="plan__cancel" bindtap="onCancelEdit">取消</text>
+  </view>
+
+  <view class="pp-notice pp-notice--info plan__notice" wx:elif="{{!plan.isDraft}}">
+    <view class="pp-notice__ic">
+      <pp-icon name="shield" size="32rpx" color="#2b4acb" />
+    </view>
+    <view class="pp-notice__text">这份教案已定稿。定稿后仍可再次编辑，重新编辑会先回到草稿状态。</view>
+  </view>
+
+  <!-- 教学目标 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="goal" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="target" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">教学目标</view>
+      <pp-status-chip type="soft">知识 / 能力 / 素养</pp-status-chip>
+      <view class="pp-collapse__chev {{open.goal ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+
+    <view class="pp-collapse__body" wx:if="{{open.goal}}">
+      <block wx:if="{{editing}}">
+        <view class="plan__goal-row">
+          <view class="plan__goal-key">知识</view>
+          <textarea class="pp-textarea plan__goal-input" value="{{draft.objectives.knowledge}}" auto-height
+            placeholder="知识目标" placeholder-class="plan__ph"
+            data-field="objectives.knowledge" bindinput="onDraftInput" />
+        </view>
+        <view class="plan__goal-row">
+          <view class="plan__goal-key plan__goal-key--k2">能力</view>
+          <textarea class="pp-textarea plan__goal-input" value="{{draft.objectives.ability}}" auto-height
+            placeholder="能力目标" placeholder-class="plan__ph"
+            data-field="objectives.ability" bindinput="onDraftInput" />
+        </view>
+        <view class="plan__goal-row">
+          <view class="plan__goal-key plan__goal-key--k3">素养</view>
+          <textarea class="pp-textarea plan__goal-input" value="{{draft.objectives.literacy}}" auto-height
+            placeholder="素养目标" placeholder-class="plan__ph"
+            data-field="objectives.literacy" bindinput="onDraftInput" />
+        </view>
+      </block>
+      <block wx:else>
+        <view class="plan__goal-row" wx:if="{{plan.objectives.knowledge}}">
+          <view class="plan__goal-key">知识</view>
+          <view class="plan__text">{{plan.objectives.knowledge}}</view>
+        </view>
+        <view class="plan__goal-row" wx:if="{{plan.objectives.ability}}">
+          <view class="plan__goal-key plan__goal-key--k2">能力</view>
+          <view class="plan__text">{{plan.objectives.ability}}</view>
+        </view>
+        <view class="plan__goal-row" wx:if="{{plan.objectives.literacy}}">
+          <view class="plan__goal-key plan__goal-key--k3">素养</view>
+          <view class="plan__text">{{plan.objectives.literacy}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 教学重点 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="key" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="layer" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">教学重点</view>
+      <view class="pp-collapse__chev {{open.key ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+    <view class="pp-collapse__body" wx:if="{{open.key}}">
+      <textarea wx:if="{{editing}}" class="pp-textarea" value="{{draft.keyPoints}}" auto-height
+        placeholder="教学重点" placeholder-class="plan__ph"
+        data-field="keyPoints" bindinput="onDraftInput" />
+      <view wx:else class="plan__text">{{plan.keyPoints || '—'}}</view>
+    </view>
+  </view>
+
+  <!-- 教学难点 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="diff" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="warn" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">教学难点</view>
+      <view class="pp-collapse__chev {{open.diff ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+    <view class="pp-collapse__body" wx:if="{{open.diff}}">
+      <textarea wx:if="{{editing}}" class="pp-textarea" value="{{draft.difficultPoints}}" auto-height
+        placeholder="教学难点" placeholder-class="plan__ph"
+        data-field="difficultPoints" bindinput="onDraftInput" />
+      <view wx:else class="plan__text">{{plan.difficultPoints || '—'}}</view>
+    </view>
+  </view>
+
+  <!-- 教学过程 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="process" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="clock" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">教学过程</view>
+      <pp-status-chip type="soft">共 {{processTotal}} 分钟</pp-status-chip>
+      <view class="pp-collapse__chev {{open.process ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+    <view class="pp-collapse__body" wx:if="{{open.process}}">
+      <view class="pp-timeline">
+        <view class="pp-tl-item" wx:for="{{editing ? draft.process : plan.process}}" wx:key="index">
+          <view class="pp-tl-head">
+            <input wx:if="{{editing}}" class="pp-input pp-input--sm plan__tl-stage" value="{{item.stage}}"
+              placeholder="环节" placeholder-class="plan__ph"
+              data-index="{{index}}" data-field="stage" bindinput="onProcessInput" />
+            <view wx:else class="pp-tl-stage">{{item.stage}}</view>
+
+            <view wx:if="{{editing}}" class="plan__tl-min">
+              <input class="pp-input pp-input--sm plan__tl-min-input" type="number" value="{{item.duration}}"
+                maxlength="3" data-index="{{index}}" data-field="duration" bindinput="onProcessInput" />
+              <text class="plan__tl-min-unit">分钟</text>
+            </view>
+            <view wx:else class="pp-tl-min">{{item.duration}} 分钟</view>
+          </view>
+
+          <textarea wx:if="{{editing}}" class="pp-textarea plan__tl-textarea" value="{{item.content}}" auto-height
+            placeholder="环节内容" placeholder-class="plan__ph"
+            data-index="{{index}}" data-field="content" bindinput="onProcessInput" />
+          <view wx:else class="pp-tl-text">{{item.content}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 板书设计 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="board" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="board" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">板书设计</view>
+      <view class="pp-collapse__chev {{open.board ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+    <view class="pp-collapse__body" wx:if="{{open.board}}">
+      <textarea wx:if="{{editing}}" class="pp-textarea" value="{{draft.blackboardDesign}}" auto-height
+        placeholder="板书设计" placeholder-class="plan__ph"
+        data-field="blackboardDesign" bindinput="onDraftInput" />
+      <view wx:else class="plan__text">{{plan.blackboardDesign || '—'}}</view>
+    </view>
+  </view>
+
+  <!-- 作业布置 -->
+  <view class="pp-card plan__section">
+    <view class="pp-collapse__head" data-key="homework" bindtap="onToggle">
+      <view class="pp-collapse__ic"><pp-icon name="plan" size="30rpx" color="#2b4acb" /></view>
+      <view class="pp-collapse__title">作业布置</view>
+      <view class="pp-collapse__chev {{open.homework ? 'pp-collapse__chev--open' : ''}}">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+    <view class="pp-collapse__body" wx:if="{{open.homework}}">
+      <textarea wx:if="{{editing}}" class="pp-textarea" value="{{draft.homework}}" auto-height
+        placeholder="作业布置" placeholder-class="plan__ph"
+        data-field="homework" bindinput="onDraftInput" />
+      <view wx:else class="plan__text">{{plan.homework || '—'}}</view>
+    </view>
+  </view>
+
+  <!-- 参考资料 -->
+  <view class="pp-card plan__section plan__refs">
+    <view class="pp-sec__head" style="margin: 0 0 8rpx">
+      <view class="pp-sec__title plan__refs-title">
+        <pp-icon name="shield" size="30rpx" color="#2b4acb" />
+        <text>参考资料</text>
+      </view>
+      <pp-status-chip type="{{plan.hasRefs ? 'ok' : 'draft'}}">
+        {{plan.hasRefs ? '引用可追溯' : '通用知识'}}
+      </pp-status-chip>
+    </view>
+
+    <block wx:if="{{plan.hasRefs}}">
+      <view class="plan__ref-item" wx:for="{{plan.refs}}" wx:key="index" data-index="{{index}}" bindtap="onRefTap">
+        <view class="plan__ref-ic"><pp-icon name="doc" size="30rpx" color="#2b4acb" /></view>
+        <view class="pp-li__grow">
+          <view class="plan__ref-name">《{{item.materialName}}》</view>
+          <view class="plan__ref-sec">{{item.sec}}</view>
+        </view>
+        <view class="pp-chev"><pp-icon name="chev" size="26rpx" color="#b9c2d0" /></view>
+      </view>
+      <view class="plan__ref-foot">以上为生成时实际引用的资料位置，点击可查看原文摘要核对。</view>
+    </block>
+
+    <block wx:else>
+      <view class="pp-notice pp-notice--warn">
+        <view class="pp-notice__ic"><pp-icon name="warn" size="32rpx" color="#c08a22" /></view>
+        <view class="pp-notice__text">以下内容基于通用知识生成，未参考上传资料。</view>
+      </view>
+      <view class="plan__ref-foot">
+        上传与“{{plan.topic}}”相关的 txt / md 资料后重新生成，即可获得可追溯的引用说明。
+      </view>
+      <view class="pp-btn pp-btn--ghost pp-btn--sm plan__ref-action" hover-class="pp-btn--hover" bindtap="onGoUpload">
+        <pp-icon name="upload" size="28rpx" color="#0f172a" />
+        <text>为《{{plan.courseName}}》补充资料</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="pp-bottom-bar">
+    <block wx:if="{{editing}}">
+      <view class="pp-bottom-bar__row">
+        <view class="pp-btn pp-btn--ghost" hover-class="pp-btn--hover" bindtap="onSaveDraft">
+          <text>保存草稿</text>
+        </view>
+        <view class="pp-btn pp-btn--primary" hover-class="pp-btn--hover" bindtap="onFinalize">
+          <text>标记为定稿</text>
+        </view>
+      </view>
+      <view class="pp-bar-hint">保存后内容会写入该教案，来源与结构由 PrepPal 保持</view>
+    </block>
+
+    <block wx:elif="{{plan.isDraft}}">
+      <view class="pp-bottom-bar__row">
+        <view class="pp-btn pp-btn--ghost" hover-class="pp-btn--hover" bindtap="onStartEdit">
+          <pp-icon name="edit" size="30rpx" color="#0f172a" />
+          <text>编辑教案</text>
+        </view>
+        <view class="pp-btn pp-btn--primary" hover-class="pp-btn--hover" bindtap="onFinalize">
+          <text>标记为定稿</text>
+        </view>
+      </view>
+      <view class="pp-bar-hint">当前为草稿，可随时编辑</view>
+    </block>
+
+    <block wx:else>
+      <view class="pp-btn pp-btn--ghost pp-btn--block" hover-class="pp-btn--hover" bindtap="onStartEdit">
+        <pp-icon name="edit" size="30rpx" color="#0f172a" />
+        <text>编辑教案</text>
+      </view>
+      <view class="pp-bar-hint">已定稿，编辑并保存后会回到草稿状态</view>
+    </block>
+  </view>
+</view>
+
+<van-action-sheet
+  show="{{sheetShow}}"
+  actions="{{sheetActions}}"
+  title="教案操作"
+  cancel-text="取消"
+  round
+  z-index="2100"
+  bind:select="onSheetSelect"
+  bind:close="onSheetClose"
+  bind:cancel="onSheetClose"
+/>
+
+<van-dialog
+  show="{{dialogShow}}"
+  title="{{dialogTitle}}"
+  message="{{dialogMessage}}"
+  show-cancel-button
+  confirm-button-text="{{dialogOkText}}"
+  confirm-button-color="{{dialogDanger ? '#e5484d' : '#2b4acb'}}"
+  custom-style="width: 552rpx"
+  z-index="2200"
+  bind:confirm="onDialogConfirm"
+  bind:cancel="onDialogCancel"
+/>
+
+<van-popup
+  show="{{popupShow}}"
+  position="bottom"
+  round
+  closeable
+  custom-style="padding: 40rpx 32rpx 60rpx; background: #ffffff"
+  z-index="2300"
+  bind:close="onRefPopupClose"
+>
+  <view class="ref-pop__title">《{{refPopup.materialName}}》</view>
+  <view class="ref-pop__sec">{{refPopup.sec}}</view>
+  <view class="ref-pop__body">{{refPopup.excerpt}}</view>
+  <view class="pp-btn pp-btn--soft pp-btn--block ref-pop__btn" hover-class="pp-btn--hover" bindtap="onRefPopupClose">
+    <text>关闭</text>
+  </view>
+</van-popup>

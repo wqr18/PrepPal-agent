@@ -1,0 +1,1815 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PrepPal 智能备课 · 微信小程序高保真原型</title>
+<style>
+/* ============================================================
+   PrepPal 智能备课 — WeChat Mini Program Hi-Fi Prototype
+   设计令牌
+   ============================================================ */
+:root{
+  --brand:#2B4ACB;          /* 深靛蓝 · 智慧蓝 */
+  --brand-600:#2540B4;
+  --brand-700:#1B2F87;
+  --brand-50:#EEF2FF;
+  --brand-100:#DCE4FE;
+  --ink:#0F172A;
+  --ink-2:#475467;
+  --ink-3:#8A94A6;
+  --bg:#F3F6FC;             /* 浅蓝灰背景 */
+  --card:#FFFFFF;
+  --line:#E8EDF6;
+  --line-2:#F1F4FA;
+  --ok:#12A150;
+  --ok-bg:#E9F8EF;
+  --warn:#B7791F;
+  --warn-bg:#FEF7E6;
+  --warn-line:#F5DFA8;
+  --danger:#E5484D;
+  --danger-bg:#FEECEC;
+  --r-lg:18px;
+  --r-md:14px;
+  --r-sm:10px;
+  --sh-1:0 1px 2px rgba(16,24,40,.05), 0 8px 24px -14px rgba(16,24,40,.16);
+  --sh-2:0 2px 6px rgba(16,24,40,.06), 0 18px 40px -20px rgba(27,47,135,.30);
+  --sh-brand:0 10px 24px -10px rgba(43,74,203,.55);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1100px 560px at 8% -12%, #D9E4FF 0%, rgba(217,228,255,0) 62%),
+    radial-gradient(900px 520px at 104% 4%, #E4EEFF 0%, rgba(228,238,255,0) 60%),
+    #EAEFF7;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- 桌面框架：左侧说明 + 中央手机 ---------- */
+.app{display:flex;gap:26px;height:100vh;padding:24px 26px;overflow:hidden}
+.sidebar{
+  width:296px;flex:0 0 296px;height:100%;overflow:auto;
+  background:rgba(255,255,255,.72);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.9);border-radius:22px;
+  padding:20px 18px;box-shadow:var(--sh-1);
+}
+.brand{display:flex;gap:11px;align-items:center}
+.brand-mark{
+  width:38px;height:38px;border-radius:11px;flex:0 0 38px;
+  background:linear-gradient(145deg,var(--brand),var(--brand-700));
+  color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-brand);
+}
+.brand h1{font-size:15px;margin:0;letter-spacing:-.2px}
+.brand p{margin:2px 0 0;font-size:11.5px;color:var(--ink-3)}
+.side-note{
+  margin:16px 0 6px;font-size:11.5px;line-height:1.75;color:var(--ink-2);
+  background:var(--brand-50);border:1px solid var(--brand-100);border-radius:12px;padding:10px 11px;
+}
+.side-sec{margin-top:16px}
+.side-sec>h3{
+  font-size:11px;letter-spacing:.14em;color:var(--ink-3);margin:0 0 9px;font-weight:600;text-transform:uppercase;
+}
+.navlist{display:flex;flex-direction:column;gap:3px}
+.navlist button{
+  all:unset;cursor:pointer;display:flex;gap:9px;align-items:center;
+  padding:7px 9px;border-radius:9px;font-size:12.5px;color:var(--ink-2);
+  transition:background .15s,color .15s;
+}
+.navlist button:hover{background:#EDF1F9;color:var(--ink)}
+.navlist button .n{
+  width:19px;height:19px;flex:0 0 19px;border-radius:6px;background:#EBF0FA;color:var(--ink-3);
+  font-size:10.5px;display:flex;align-items:center;justify-content:center;font-weight:600;
+}
+.navlist button.active{background:var(--brand);color:#fff;font-weight:600;box-shadow:var(--sh-brand)}
+.navlist button.active .n{background:rgba(255,255,255,.24);color:#fff}
+.switch{display:flex;gap:9px;align-items:center;font-size:12px;color:var(--ink-2);padding:6px 2px;cursor:pointer}
+.switch input{display:none}
+.switch i{
+  width:32px;height:19px;flex:0 0 32px;border-radius:20px;background:#D7DEEA;position:relative;transition:background .18s;
+}
+.switch i::after{
+  content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;
+  transition:transform .18s;box-shadow:0 1px 3px rgba(16,24,40,.28);
+}
+.switch input:checked + i{background:var(--brand)}
+.switch input:checked + i::after{transform:translateX(13px)}
+.ghost{
+  all:unset;cursor:pointer;margin-top:10px;width:100%;text-align:center;padding:9px;
+  border-radius:11px;border:1px solid var(--line);font-size:12px;color:var(--ink-2);background:#fff;
+}
+.ghost:hover{border-color:var(--brand-100);color:var(--brand);background:var(--brand-50)}
+.side-foot{margin-top:18px;font-size:10.5px;color:var(--ink-3);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;min-width:0}
+@media (max-width:1240px){.app{gap:18px;padding:18px}.device{zoom:.9}}
+@media (max-width:1120px){.sidebar{width:252px;flex-basis:252px}.device{zoom:.84}}
+@media (max-width:980px){.app{gap:12px}.sidebar{width:224px;flex-basis:224px;padding:16px 13px}.device{zoom:.76}}
+@media (max-width:860px){.app{padding:12px;gap:8px}.sidebar{width:200px;flex-basis:200px}.device{zoom:.68}}
+@media (max-width:760px){.app{padding:8px}.sidebar{display:none}.device{zoom:.8}}
+
+/* ---------- 手机外框 ---------- */
+.device{
+  width:390px;height:844px;flex:0 0 auto;border-radius:52px;padding:11px;
+  background:linear-gradient(160deg,#1B2138,#0B1020);
+  box-shadow:0 40px 80px -30px rgba(11,16,32,.55), 0 2px 0 rgba(255,255,255,.12) inset;
+}
+.screen{
+  position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;
+  background:var(--bg);display:flex;flex-direction:column;
+}
+/* 状态栏 */
+.statusbar{
+  height:46px;flex:0 0 46px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 26px 5px;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.2px;
+  background:transparent;position:relative;z-index:6;
+}
+.statusbar .icons{display:flex;gap:5px;align-items:center}
+.statusbar svg{display:block}
+/* 导航栏 */
+.navbar{
+  flex:0 0 44px;height:44px;display:flex;align-items:center;padding:0 12px;position:relative;z-index:6;
+  background:transparent;
+}
+.navbar .nav-title{
+  position:absolute;left:0;right:0;text-align:center;font-size:16.5px;font-weight:600;letter-spacing:-.2px;
+  pointer-events:none;
+}
+.navbar .nav-back{
+  all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--ink);z-index:2;
+}
+.navbar .nav-back:hover{background:rgba(15,23,42,.06)}
+.capsule{
+  margin-left:auto;width:78px;height:30px;border-radius:15px;background:rgba(255,255,255,.66);
+  border:1px solid rgba(15,23,42,.07);display:flex;align-items:center;justify-content:space-around;
+  position:relative;z-index:2;backdrop-filter:blur(6px);
+}
+.capsule .dots{display:flex;gap:3px}
+.capsule .dots i{width:4px;height:4px;border-radius:50%;background:#3D4657;display:block}
+.capsule .div{width:1px;height:16px;background:rgba(15,23,42,.12)}
+.capsule svg{color:#3D4657}
+/* 视口 */
+.viewport{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative}
+.viewport::-webkit-scrollbar{display:none}
+/* Tab Bar */
+.tabbar{
+  flex:0 0 auto;display:flex;align-items:center;padding:6px 0 0;background:rgba(255,255,255,.94);
+  border-top:1px solid var(--line);backdrop-filter:blur(12px);position:relative;z-index:5;
+}
+.tabbar.hide{display:none}
+.tabbar .tab{
+  all:unset;cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:10.5px;color:var(--ink-3);padding:4px 0 6px;
+}
+.tabbar .tab.active{color:var(--brand);font-weight:600}
+.safearea{height:22px;flex:0 0 22px;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center}
+.tabbar.hide + .safearea{background:var(--bg)}
+.homebar{width:134px;height:5px;border-radius:3px;background:rgba(15,23,42,.22)}
+
+/* ---------- 通用页面元素 ---------- */
+.page{min-height:100%;display:flex;flex-direction:column;padding:4px 16px 18px;animation:pageIn .24s cubic-bezier(.22,.7,.35,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.page-body{flex:1}
+h1.page-title{font-size:22px;margin:2px 0 2px;letter-spacing:-.5px}
+.page-sub{font-size:12.5px;color:var(--ink-3);margin:0 0 14px}
+.card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh-1);border:1px solid rgba(232,237,246,.9)}
+.sec{margin-top:16px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 9px}
+.sec-head h3{font-size:14.5px;margin:0;letter-spacing:-.2px}
+.sec-head a{font-size:12px;color:var(--brand);cursor:pointer;text-decoration:none;font-weight:500}
+.tag-soft{font-size:10.5px;color:var(--brand);background:var(--brand-50);border-radius:6px;padding:2px 6px;font-weight:600}
+.divider{height:1px;background:var(--line);margin:0}
+.muted{color:var(--ink-3)}
+/* 按钮 */
+.btn{
+  all:unset;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 18px;border-radius:14px;font-size:15px;font-weight:600;text-align:center;
+  transition:transform .12s, box-shadow .18s, background .18s;letter-spacing:-.2px;
+}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:linear-gradient(180deg,var(--brand),var(--brand-600));color:#fff;box-shadow:var(--sh-brand)}
+.btn-primary:hover{box-shadow:0 12px 28px -10px rgba(43,74,203,.62)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh-1)}
+.btn-ghost:hover{border-color:var(--brand-100);color:var(--brand)}
+.btn-soft{background:var(--brand-50);color:var(--brand);border:1px solid var(--brand-100)}
+.btn-danger{background:var(--danger);color:#fff;box-shadow:0 10px 22px -12px rgba(229,72,77,.8)}
+.btn-block{width:100%}
+.btn-sm{padding:9px 13px;border-radius:11px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none}
+.spinner{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 底部固定操作条 */
+.bottom-bar{
+  position:sticky;bottom:0;margin:18px -16px 0;padding:12px 16px 14px;
+  background:rgba(243,246,252,.95);backdrop-filter:blur(10px);
+  box-shadow:0 -10px 18px -14px rgba(15,23,42,.22);
+  display:flex;flex-direction:column;gap:8px;z-index:4;
+}
+.bottom-bar .row{display:flex;gap:10px}
+.bottom-bar .row .btn{flex:1}
+.bar-hint{font-size:11px;color:var(--ink-3);text-align:center}
+/* 表单 */
+.field{margin-bottom:14px}
+.field > label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);margin:0 0 7px 2px}
+.field .req{color:var(--danger);font-weight:600}
+.field .opt{font-size:10.5px;color:var(--ink-3);font-weight:500;background:#F1F4FA;border-radius:5px;padding:1px 5px}
+.input,.textarea{
+  width:100%;border:1px solid var(--line);background:#fff;border-radius:var(--r-md);
+  padding:13px 14px;font-size:14.5px;color:var(--ink);font-family:inherit;outline:none;
+  transition:border-color .16s, box-shadow .16s;box-shadow:0 1px 2px rgba(16,24,40,.03);
+}
+.input::placeholder,.textarea::placeholder{color:#A9B2C0}
+.input:focus,.textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3.5px rgba(43,74,203,.13)}
+.textarea{min-height:92px;resize:vertical;line-height:1.6}
+.field.invalid .input,.field.invalid .textarea{border-color:var(--danger);box-shadow:0 0 0 3.5px rgba(229,72,77,.1)}
+.err{display:none;font-size:11.5px;color:var(--danger);margin:6px 0 0 3px}
+.field.invalid .err{display:block}
+.picker-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border:1px solid var(--line);background:#fff;border-radius:var(--r-md);padding:13px 14px;cursor:pointer;
+  font-size:14.5px;box-shadow:0 1px 2px rgba(16,24,40,.03);
+}
+.picker-row:hover{border-color:var(--brand-100)}
+.seg{display:flex;background:#EDF1F8;border-radius:12px;padding:3px;gap:3px}
+.seg button{
+  all:unset;cursor:pointer;flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-size:13px;color:var(--ink-2);
+  transition:all .16s;font-weight:500;
+}
+.seg button.on{background:#fff;color:var(--brand);font-weight:600;box-shadow:0 1px 3px rgba(16,24,40,.1)}
+.hint-box{
+  display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.6;color:var(--ink-2);
+  background:var(--brand-50);border:1px solid var(--brand-100);border-radius:12px;padding:10px 12px;
+}
+.hint-box b{color:var(--brand)}
+/* 状态标签 */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:7px;padding:3px 7px;white-space:nowrap}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.chip.draft{background:#FFF4E5;color:#B7791F}
+.chip.final{background:var(--ok-bg);color:var(--ok)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.load{background:var(--brand-50);color:var(--brand)}
+.chip.err{background:var(--danger-bg);color:var(--danger)}
+.chip.neutral{background:#F1F4FA;color:var(--ink-2)}
+/* 提示条 */
+.notice{
+  display:flex;gap:9px;align-items:flex-start;border-radius:13px;padding:11px 13px;font-size:12.5px;line-height:1.65;
+}
+.notice.warn{background:var(--warn-bg);border:1px solid var(--warn-line);color:#7A5310}
+.notice.warn .ic{color:#C08A22}
+.notice.info{background:var(--brand-50);border:1px solid var(--brand-100);color:#26418F}
+.notice.ok{background:var(--ok-bg);border:1px solid #BFE7CE;color:#0C7C3D}
+.notice .ic{flex:0 0 16px;margin-top:1px}
+/* 空状态 */
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 22px;gap:6px}
+.empty .art{
+  width:78px;height:78px;border-radius:22px;background:linear-gradient(150deg,#E7EEFF,#F6F9FF);
+  border:1px solid #DFE7FA;display:flex;align-items:center;justify-content:center;color:var(--brand);margin-bottom:8px;
+}
+.empty h4{margin:0;font-size:15px;letter-spacing:-.2px}
+.empty p{margin:0;font-size:12.5px;color:var(--ink-3);line-height:1.75;max-width:250px}
+.empty .btn{margin-top:14px}
+/* 列表项 */
+.li{
+  display:flex;gap:12px;align-items:center;padding:13px 14px;cursor:pointer;transition:background .14s;
+}
+.li:hover{background:#FAFBFE}
+.li + .li{border-top:1px solid var(--line-2)}
+.li .grow{flex:1;min-width:0}
+.li .t{font-size:14px;font-weight:600;letter-spacing:-.2px;margin:0 0 4px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.li .m{font-size:11.5px;color:var(--ink-3);margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chev{color:#B9C2D0;flex:0 0 auto}
+.fileicon{
+  width:38px;height:38px;flex:0 0 38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  background:var(--brand-50);color:var(--brand);font-size:9.5px;font-weight:700;letter-spacing:.02em;
+}
+.fileicon.txt{background:#EEF7F1;color:#0F8A4A}
+.fileicon.md{background:#EEF1FF;color:#3B49B8}
+.fileicon.big{width:52px;height:52px;flex-basis:52px;border-radius:14px;font-size:11px}
+.avatar-btn{
+  all:unset;cursor:pointer;width:42px;height:42px;border-radius:50%;flex:0 0 42px;
+  background:linear-gradient(150deg,#4B6BE5,#22347F);color:#fff;font-size:15px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-brand);
+}
+.avatar-btn:hover{transform:translateY(-1px)}
+/* 首页 */
+.home-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 2px 0}
+.home-head .greet{font-size:22px;font-weight:700;margin:0;letter-spacing:-.5px}
+.home-head .sub{font-size:12.5px;color:var(--ink-3);margin:5px 0 0}
+.cta-card{
+  margin-top:16px;border-radius:20px;padding:18px;position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(135deg,#2B4ACB 0%,#1B2F87 62%,#152564 100%);
+  box-shadow:0 18px 36px -18px rgba(27,47,135,.75);
+}
+.cta-card::after{
+  content:"";position:absolute;right:-40px;top:-56px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.30), rgba(255,255,255,0) 68%);
+}
+.cta-card h2{margin:0;font-size:19px;letter-spacing:-.4px}
+.cta-card p{margin:7px 0 0;font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.82);max-width:230px}
+.cta-card .btn{margin-top:15px;background:#fff;color:var(--brand-700);box-shadow:0 10px 22px -12px rgba(0,0,0,.6);width:100%}
+.cta-top{display:flex;align-items:center;gap:9px;justify-content:space-between}
+.cta-badge{
+  flex:0 0 auto;font-size:10.5px;color:rgba(255,255,255,.82);white-space:nowrap;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:4px 8px;
+}
+.stat-row{display:flex;gap:10px;margin-top:16px}
+.stat{
+  flex:1;background:#fff;border:1px solid rgba(232,237,246,.9);border-radius:15px;padding:12px 13px;box-shadow:var(--sh-1);
+}
+.stat .n{font-size:22px;font-weight:700;letter-spacing:-.6px;color:var(--ink)}
+.stat .n small{font-size:11.5px;font-weight:600;color:var(--ink-3);margin-left:2px}
+.stat .l{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.stat.accent .n{color:var(--brand)}
+.course-card{padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:transform .14s,box-shadow .18s}
+.course-card:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
+.course-card .name{font-size:15px;font-weight:650;margin:0 0 5px;letter-spacing:-.2px;display:flex;align-items:center;gap:7px}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.pill{font-size:10.5px;color:var(--ink-2);background:#F4F7FC;border:1px solid var(--line);border-radius:7px;padding:3px 7px}
+/* 课程详情头部 */
+.course-hero{
+  border-radius:20px;padding:17px;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#3355D6,#1E3288);
+  box-shadow:0 16px 32px -18px rgba(30,50,136,.7);
+}
+.course-hero h2{margin:0 30px 7px 0;font-size:19px;letter-spacing:-.4px}
+.course-hero p{margin:0;font-size:12.5px;color:rgba(255,255,255,.82);line-height:1.65}
+.course-hero .more{
+  all:unset;cursor:pointer;position:absolute;right:13px;top:13px;width:28px;height:28px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(255,255,255,.16);
+}
+.course-hero .more:hover{background:rgba(255,255,255,.26)}
+.two-cards{display:flex;gap:10px;margin-top:14px}
+.mini-card{
+  flex:1;background:#fff;border:1px solid rgba(232,237,246,.9);border-radius:15px;padding:13px;cursor:pointer;
+  box-shadow:var(--sh-1);transition:transform .14s,box-shadow .18s;
+}
+.mini-card:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
+.mini-card .h{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.mini-card .v{font-size:20px;font-weight:700;letter-spacing:-.5px;margin-top:6px}
+.mini-card .v small{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-left:2px}
+/* 时间轴 */
+.timeline{position:relative;padding:4px 0 2px}
+.tl-item{position:relative;padding:0 0 16px 30px}
+.tl-item:last-child{padding-bottom:2px}
+.tl-item::before{
+  content:"";position:absolute;left:8.5px;top:6px;width:9px;height:9px;border-radius:50%;
+  background:#fff;border:2.5px solid var(--brand);z-index:1;
+}
+.tl-item::after{content:"";position:absolute;left:12.5px;top:17px;bottom:0;width:1.5px;background:var(--line)}
+.tl-item:last-child::after{display:none}
+.tl-head{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.tl-stage{font-size:13.5px;font-weight:650;letter-spacing:-.2px}
+.tl-min{font-size:10.5px;font-weight:600;color:var(--brand);background:var(--brand-50);border-radius:6px;padding:2px 6px}
+.tl-text{font-size:12.5px;line-height:1.7;color:var(--ink-2)}
+/* 可编辑内容 */
+.editable{border-radius:10px;padding:6px 8px;margin:-6px -8px;transition:background .15s, box-shadow .15s;outline:none;line-height:1.72}
+[contenteditable="true"].editable:hover{background:#F8FAFF}
+[contenteditable="true"].editable:focus{background:#F7F9FF;box-shadow:0 0 0 2.5px rgba(43,74,203,.16)}
+.edit-hint{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:5px;margin:0 2px 8px}
+.collapse-head{
+  display:flex;align-items:center;gap:9px;cursor:pointer;padding:13px 14px;user-select:none;
+}
+.collapse-head .ic{width:26px;height:26px;border-radius:8px;background:var(--brand-50);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:0 0 26px}
+.collapse-head h3{margin:0;font-size:14px;flex:1;letter-spacing:-.2px}
+.collapse-head .chev{transition:transform .2s}
+.collapse.open .collapse-head .chev{transform:rotate(180deg)}
+.collapse-body{display:none;padding:0 14px 14px}
+.collapse.open .collapse-body{display:block;animation:pageIn .2s ease-out}
+.goal-row{display:flex;gap:9px;padding:9px 0}
+.goal-row + .goal-row{border-top:1px dashed var(--line)}
+.goal-key{
+  flex:0 0 46px;font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-50);
+  border-radius:6px;height:20px;display:flex;align-items:center;justify-content:center;margin-top:2px;
+}
+.goal-row .goal-key.k2{color:#0F8A4A;background:#EEF7F1}
+.goal-row .goal-key.k3{color:#B7791F;background:#FFF6E6}
+/* 参考资料 */
+.ref-item{display:flex;gap:9px;align-items:flex-start;padding:11px 0}
+.ref-item + .ref-item{border-top:1px solid var(--line-2)}
+.ref-item .doc{
+  width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:var(--brand-50);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+}
+.ref-item .fn{font-size:13px;font-weight:600;letter-spacing:-.1px;word-break:break-all}
+.ref-item .sec-txt{font-size:11.5px;color:var(--brand);margin-top:3px;display:flex;align-items:center;gap:5px;cursor:pointer}
+.ref-item .sec-txt:hover{text-decoration:underline}
+/* 上传 */
+.dropzone{
+  border:1.5px dashed #C6D2E8;border-radius:16px;background:#FBFCFF;padding:26px 18px;text-align:center;cursor:pointer;
+  transition:all .16s;
+}
+.dropzone:hover{border-color:var(--brand);background:var(--brand-50)}
+.dropzone .ico{
+  width:56px;height:56px;border-radius:16px;background:#fff;border:1px solid var(--line);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:var(--sh-1);
+}
+.dropzone h4{margin:0;font-size:14.5px;letter-spacing:-.2px}
+.dropzone p{margin:6px 0 0;font-size:11.5px;color:var(--ink-3)}
+.pick-li{display:flex;gap:11px;align-items:center;padding:11px 13px;cursor:pointer}
+.pick-li:hover{background:#FAFBFE}
+.pick-li+.pick-li{border-top:1px solid var(--line-2)}
+.progress{height:7px;border-radius:6px;background:#E7ECF6;overflow:hidden}
+.progress > i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#4B6BE5,#2B4ACB);transition:width .25s ease}
+/* 生成中 */
+.gen-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:52px 8px 0}
+.orb{
+  width:104px;height:104px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 34% 30%, #6E8BF5, #2B4ACB 62%, #1B2F87);
+  box-shadow:0 22px 44px -18px rgba(43,74,203,.75);color:#fff;font-weight:700;font-size:20px;letter-spacing:.5px;
+}
+.orb::before{
+  content:"";position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(43,74,203,.24);
+  border-top-color:var(--brand);animation:spin 1.5s linear infinite;
+}
+.orb::after{
+  content:"";position:absolute;inset:-28px;border-radius:50%;border:1px dashed rgba(43,74,203,.18);
+  animation:spin 8s linear infinite reverse;
+}
+.gen-wrap h2{font-size:17px;margin:30px 0 0;letter-spacing:-.3px}
+.gen-wrap .gen-sub{font-size:12.5px;color:var(--ink-3);margin:9px 0 22px;line-height:1.7}
+.steps{list-style:none;padding:0;margin:20px 0 0;width:100%;display:flex;flex-direction:column;gap:9px}
+.steps li{
+  display:flex;gap:9px;align-items:center;font-size:12.5px;color:var(--ink-3);background:#fff;
+  border:1px solid var(--line);border-radius:12px;padding:11px 13px;text-align:left;transition:all .25s;
+}
+.steps li .dot{width:16px;height:16px;flex:0 0 16px;border-radius:50%;border:1.5px solid #D7DEEA;display:flex;align-items:center;justify-content:center}
+.steps li.doing{color:var(--brand);border-color:var(--brand-100);background:var(--brand-50)}
+.steps li.doing .dot{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
+.steps li.done{color:var(--ink-2)}
+.steps li.done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.gen-refs{
+  margin-top:18px;font-size:11px;color:var(--ink-3);background:#fff;border:1px dashed var(--line);
+  border-radius:12px;padding:10px 12px;line-height:1.7;text-align:left;
+}
+/* 我的 */
+.profile{display:flex;gap:13px;align-items:center;padding:17px}
+.profile .nm{font-size:17px;font-weight:700;letter-spacing:-.3px;margin:0}
+.profile .meta{font-size:11.5px;color:var(--ink-3);margin:5px 0 0;line-height:1.6}
+.profile .avs{
+  width:58px;height:58px;flex:0 0 58px;border-radius:20px;color:#fff;font-size:21px;font-weight:700;
+  background:linear-gradient(150deg,#4B6BE5,#22347F);display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-brand);
+}
+.menu-item{display:flex;gap:12px;align-items:center;padding:14px;cursor:pointer}
+.menu-item+.menu-item{border-top:1px solid var(--line-2)}
+.menu-item:hover{background:#FAFBFE}
+.menu-item .mi-ic{
+  width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--brand-50);color:var(--brand);
+}
+.menu-item .mi-t{font-size:14px;font-weight:600;letter-spacing:-.1px}
+.menu-item .mi-s{font-size:11px;color:var(--ink-3);margin-top:3px}
+/* 登录 */
+.login{padding:0}
+.login-hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:44px 26px 0;position:relative;
+}
+.login-hero::before{
+  content:"";position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(43,74,203,.16),rgba(43,74,203,0) 66%);
+}
+.logo{
+  width:88px;height:88px;border-radius:26px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,#3355D6,#1B2F87);box-shadow:0 20px 38px -16px rgba(43,74,203,.75);color:#fff;
+}
+.login-hero h1{font-size:24px;margin:22px 0 0;letter-spacing:-.6px}
+.login-hero .tagline{font-size:13.5px;color:var(--ink-2);margin:11px 0 0;letter-spacing:-.1px}
+.points{display:flex;flex-direction:column;gap:11px;margin:26px 0 0;text-align:left;width:100%}
+.point{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.point .pi{
+  width:20px;height:20px;flex:0 0 20px;border-radius:50%;background:var(--brand-50);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.login-actions{padding:24px 30px 30px;display:flex;flex-direction:column;align-items:center;gap:11px}
+.wechat-ic{width:18px;height:18px}
+.legal{font-size:10.5px;color:var(--ink-3);text-align:center;line-height:1.7}
+.legal a{color:var(--brand);text-decoration:none}
+/* 覆盖层：弹窗 / 动作面板 / toast */
+.layers{position:absolute;inset:0;pointer-events:none;z-index:20}
+.layers.on{pointer-events:auto}
+.mask{
+  position:absolute;inset:0;background:rgba(15,23,42,.44);backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;animation:fade .18s ease-out;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+  width:276px;background:#fff;border-radius:20px;overflow:hidden;text-align:center;
+  animation:pop .22s cubic-bezier(.2,.9,.35,1.1);box-shadow:var(--sh-2);
+}
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+.modal .mh{padding:21px 20px 0}
+.modal h4{margin:0;font-size:16.5px;letter-spacing:-.3px}
+.modal p{margin:9px 0 0;font-size:13px;color:var(--ink-2);line-height:1.66}
+.modal .mf{display:flex;border-top:1px solid var(--line);margin-top:19px}
+.modal .mf button{
+  all:unset;cursor:pointer;flex:1;padding:14px;font-size:15px;font-weight:600;text-align:center;color:var(--ink-2);
+}
+.modal .mf button + button{border-left:1px solid var(--line)}
+.modal .mf button.pri{color:var(--brand)}
+.modal .mf button.dgr{color:var(--danger)}
+.modal .mf button:hover{background:#F7F9FD}
+.sheet-wrap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;animation:fade .18s ease-out}
+.sheet{
+  background:#F7F9FC;border-radius:20px 20px 0 0;overflow:hidden;padding-bottom:22px;
+  animation:up .24s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 40px -12px rgba(15,23,42,.35);
+}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sheet .sh{text-align:center;font-size:12.5px;color:var(--ink-3);padding:15px 0 11px}
+.sheet .grp{background:#fff;margin:0 12px 8px;border-radius:14px;overflow:hidden}
+.sheet .grp button{
+  all:unset;cursor:pointer;display:block;width:100%;text-align:center;padding:15px;font-size:15.5px;color:var(--ink);
+  font-weight:500;
+}
+.sheet .grp button + button{border-top:1px solid var(--line-2)}
+.sheet .grp button:hover{background:#F7F9FD}
+.sheet .grp button.dgr{color:var(--danger)}
+.sheet .grp button .sb{display:block;font-size:11px;color:var(--ink-3);margin-top:3px;font-weight:400}
+.sheet .cancel{
+  all:unset;cursor:pointer;display:block;margin:4px 12px 0;background:#fff;border-radius:14px;
+  text-align:center;padding:15px;font-size:15.5px;font-weight:600;color:var(--ink);
+}
+.toast{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:rgba(15,23,42,.87);color:#fff;border-radius:13px;padding:13px 17px;font-size:13.5px;
+  display:flex;align-items:center;gap:9px;max-width:250px;line-height:1.5;
+  animation:pop .2s cubic-bezier(.2,.9,.35,1.1);box-shadow:0 18px 40px -16px rgba(0,0,0,.6);text-align:left;
+}
+.toast.out{animation:fadeOut .22s ease-in forwards}
+@keyframes fadeOut{to{opacity:0;transform:translate(-50%,-50%) scale(.96)}}
+.toast .tic{flex:0 0 16px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <header class="brand">
+      <div class="brand-mark">PP</div>
+      <div>
+        <h1>PrepPal 智能备课</h1>
+        <p>微信小程序 · 可点击高保真原型</p>
+      </div>
+    </header>
+    <div class="side-note">
+      <b>演示闭环</b>：登录 → 首页 → 课程详情 → 上传资料 → 填写教学信息 → AI 生成草稿（带来源） → 编辑定稿 → 教案管理<br>
+      示例数据：大学物理 · 牛顿第二定律
+    </div>
+    <section class="side-sec">
+      <h3>页面</h3>
+      <nav class="navlist" id="navlist"></nav>
+    </section>
+    <section class="side-sec">
+      <h3>状态演示</h3>
+      <label class="switch"><input type="checkbox" id="demoEmpty"><i></i>新用户空状态（无课程）</label>
+      <label class="switch"><input type="checkbox" id="demoTimeout"><i></i>生成超时失败</label>
+      <label class="switch"><input type="checkbox" id="demoNoRefs"><i></i>资料不足（通用知识提示）</label>
+      <button class="ghost" id="resetDemo">重置演示数据</button>
+    </section>
+    <footer class="side-foot">
+      主色 #2B4ACB · 成功 #12A150 · 背景 #F3F6FC<br>
+      资料不足的自然示例：数据结构《二叉树的遍历教案》
+    </footer>
+  </aside>
+
+  <main class="stage">
+    <div class="device">
+      <div class="screen">
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 9.6 5.4 7a3.7 3.7 0 0 1 5.2 0L8 9.6Zm0-4.4a7 7 0 0 0-4.9 2L1.5 5.6a9.7 9.7 0 0 1 13 0L12.9 7.2A7 7 0 0 0 8 5.2Z"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><path d="M22.5 4v4a2.2 2.2 0 0 0 0-4Z" fill="currentColor" opacity=".45"/></svg>
+          </span>
+        </div>
+        <div class="navbar" id="navbar"></div>
+        <div class="viewport" id="viewport"></div>
+        <div class="tabbar hide" id="tabbar"></div>
+        <div class="safearea" id="safearea"><div class="homebar"></div></div>
+        <div class="layers" id="layers"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   0. 工具
+   ============================================================ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const I = {
+  back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  chev:'<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  chevDown:'<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  dots:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>',
+  plus:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.6h6V7M6.5 7l.9 12.2A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.8L17.5 7"/></svg>',
+  doc:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
+  book:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M8 7.5h8"/></svg>',
+  spark:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3.4M12 17.6V21M4.6 12H8M16 12h3.4M6.7 6.7l2.4 2.4M14.9 14.9l2.4 2.4M17.3 6.7l-2.4 2.4M9.1 14.9l-2.4 2.4"/></svg>',
+  upload:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>',
+  target:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.6"/></svg>',
+  warn:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 4.5 3 19.5h18z"/><path d="M12 10v4M12 17h.01"/></svg>',
+  info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 11v5.2M12 7.8h.01"/></svg>',
+  check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>',
+  clock:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l3 1.8"/></svg>',
+  layer:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  board:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="12" rx="1.6"/><path d="M12 16v4M8.5 20h7"/></svg>',
+  home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3.5 10.2 12 3.5l8.5 6.7V19a1.6 1.6 0 0 1-1.6 1.6h-4V15H9.1v5.6h-4A1.6 1.6 0 0 1 3.5 19z"/></svg>',
+  grid:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.6" y="3.6" width="7.4" height="7.4" rx="2"/><rect x="13" y="3.6" width="7.4" height="7.4" rx="2"/><rect x="3.6" y="13" width="7.4" height="7.4" rx="2"/><rect x="13" y="13" width="7.4" height="7.4" rx="2"/></svg>',
+  user:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.4" r="3.7"/><path d="M4.6 20.2a7.6 7.6 0 0 1 14.8 0"/></svg>',
+  edit:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h4L19 9a2.1 2.1 0 0 0-3-3L5.5 16.5z"/></svg>',
+  help:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .9-1 1.6M12 16.6h.01"/></svg>',
+  shield:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.2 5 6v6c0 4.3 3 7.3 7 8.8 4-1.5 7-4.5 7-8.8V6z"/><path d="M9.2 12.2 11.4 14.4 15.2 10"/></svg>',
+  plan:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3.5" width="15" height="17" rx="2.4"/><path d="M8.4 8.6h7.2M8.4 12.4h7.2M8.4 16.2h4.4"/></svg>',
+  wechat:'<svg class="wechat-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M9.1 3.2C5.1 3.2 1.9 6 1.9 9.5c0 2 1.1 3.8 2.9 4.9l-.7 2.2 2.5-1.3c.8.2 1.6.3 2.5.3h.5a5.5 5.5 0 0 1-.2-1.5c0-3.3 3.2-6 7.1-6h.6c-.6-2.8-3.6-4.9-7.9-4.9Zm-2.7 3.3a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm5.4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/><path d="M22.1 14.1c0-2.9-2.9-5.3-6.4-5.3s-6.4 2.4-6.4 5.3 2.9 5.3 6.4 5.3c.7 0 1.5-.1 2.2-.3l2 1.1-.6-1.8c1.7-.9 2.8-2.5 2.8-4.3Zm-8.5-1.6a.85.85 0 1 1 0 1.7.85.85 0 0 1 0-1.7Zm4.3 0a.85.85 0 1 1 0 1.7.85.85 0 0 1 0-1.7Z"/></svg>',
+  emptyCourse:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M12 7v5M9.5 9.5h5"/></svg>',
+  emptyDoc:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/></svg>',
+  emptyPlan:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3.5" width="15" height="17" rx="2.4"/><path d="M8.4 9h7.2M8.4 13h7.2"/><path d="M15.6 17.6 17 19l2.6-2.6"/></svg>'
+};
+
+/* ============================================================
+   1. 数据
+   ============================================================ */
+function seed(){
+  return {
+    user:{ name:'王老师', real:'王明远', org:'示例大学 · 物理学院', logged:false },
+    demo:{ empty:false, timeout:false, noRefs:false },
+    courses:[
+      {
+        id:'phys', name:'大学物理',
+        intro:'面向理工科一年级，讲授力学与电磁学基础，强调用实验证据建立物理模型。',
+        updated:'今天 09:20', ts:100,
+        materials:[
+          {id:'m1', name:'大学物理第一章.md', ext:'MD', size:'248 KB', time:'10月8日 09:12', status:'ok', ts:100},
+          {id:'m2', name:'牛顿运动定律.txt', ext:'TXT', size:'96 KB', time:'10月7日 20:41', status:'ok', ts:96},
+          {id:'m3', name:'质点运动学讲义.md', ext:'MD', size:'512 KB', time:'10月6日 15:03', status:'loading', ts:88}
+        ],
+        plans:[
+          {id:'p1', title:'牛顿第二定律教案', theme:'牛顿第二定律', audience:'大学一年级理工科',
+           duration:45, type:'理论', status:'draft', updated:'10 分钟前', ts:100, refs:[
+            {file:'大学物理第一章.md', ext:'MD', sec:'# 第 3 段'},
+            {file:'牛顿运动定律.txt', ext:'TXT', sec:'# 第 8 段'}
+          ]},
+          {id:'p2', title:'牛顿第一定律教案', theme:'牛顿第一定律（惯性定律）', audience:'大学一年级理工科',
+           duration:45, type:'理论', status:'final', updated:'昨天 16:20', ts:97, refs:[
+            {file:'牛顿运动定律.txt', ext:'TXT', sec:'# 第 2 段'}
+          ]}
+        ]
+      },
+      {
+        id:'ds', name:'数据结构',
+        intro:'面向计算机类二年级，讲授常用数据结构与基础算法分析。',
+        updated:'昨天 16:40', ts:95,
+        materials:[
+          {id:'m4', name:'二叉树的定义与性质.md', ext:'MD', size:'320 KB', time:'10月7日 14:05', status:'ok', ts:95},
+          {id:'m5', name:'排序算法整理.txt', ext:'TXT', size:'1.6 MB', time:'10月5日 09:38', status:'bad', ts:80,
+           reason:'文件编码为 GBK，解析在读到第 12 行时中断。请另存为 UTF-8 编码的 .txt 后重新上传。'}
+        ],
+        plans:[
+          {id:'p3', title:'二叉树的遍历教案', theme:'二叉树的三种遍历', audience:'计算机类二年级',
+           duration:45, type:'理论', status:'draft', updated:'昨天 16:40', ts:95, refs:[]},
+          {id:'p4', title:'快速排序教案', theme:'快速排序', audience:'计算机类二年级',
+           duration:45, type:'习题', status:'final', updated:'10月6日 11:12', ts:82, refs:[
+            {file:'二叉树的定义与性质.md', ext:'MD', sec:'# 第 5 段'}
+          ]}
+        ]
+      },
+      {
+        id:'math', name:'高等数学',
+        intro:'面向工科一年级，微积分基础概念与计算方法训练。',
+        updated:'10月3日 10:20', ts:70,
+        materials:[
+          {id:'m6', name:'极限与连续.md', ext:'MD', size:'180 KB', time:'10月3日 10:20', status:'ok', ts:70}
+        ],
+        plans:[]
+      }
+    ],
+    // 教案正文（演示闭环：牛顿第二定律）
+    planBody:{
+      p1:{
+        goal:{ knowledge:'理解牛顿第二定律的内容与矢量性，掌握 F = ma 的适用条件与单位关系。',
+               ability:'能对简单力学情境建立受力模型，用正交分解列出方程并求解加速度。',
+               literacy:'形成“以实验证据支持结论”的科学态度，体会物理量之间可定量描述的关系。' },
+        key:'牛顿第二定律的内容与数学表达式；合力、质量与加速度三者的矢量对应关系。',
+        diff:'合力的分析与正交分解的建立过程；对“瞬时性与同时性”的理解。',
+        process:[
+          {stage:'导入', min:5, text:'用“推购物车”和“电梯加速上升”两段生活情境提问：同样是用力，为什么运动状态的变化不一样？引出“力如何决定运动状态的变化”。'},
+          {stage:'新授', min:22, text:'回顾演示实验的数据表格，引导学生归纳 a 与 F 成正比、a 与 m 成反比；给出 F = ma 的表达式并强调矢量性与同体性；板演水平面上受拉力的小车例题。'},
+          {stage:'探究', min:10, text:'小组任务：分析斜面上物体所受的合力，正交分解后求出加速度，教师巡回并提示常见错误。'},
+          {stage:'总结', min:5, text:'与学生共同整理解题步骤：选对象 → 受力分析 → 正交分解 → 列方程 → 检验单位与方向。'},
+          {stage:'作业', min:3, text:'布置教材第 2 章习题 2、5、7，说明下节课将用该定律处理连接体问题。'}
+        ],
+        board:'左侧列出主板书：F = ma 的三要素（大小、方向、单位）与适用条件；右侧留出例题演算区，用不同颜色区分矢量与标量，底部固定“解题五步”提示条。',
+        homework:'必做：教材第 2 章习题 2、5、7。选做：拍摄一段生活中的“力与加速度”现象，画出受力分析简图并估算加速度大小。'
+      },
+      p3:{
+        goal:{ knowledge:'理解二叉树的递归定义，掌握先序、中序、后序三种遍历的访问次序。',
+               ability:'能对给定二叉树写出三种遍历序列，并用递归代码实现遍历。',
+               literacy:'体会“递归结构对应递归算法”的思维方式。' },
+        key:'三种遍历的访问次序与递归实现。',
+        diff:'中序遍历与表达式还原之间的联系。',
+        process:[
+          {stage:'导入', min:5, text:'用文件夹目录结构类比二叉树，说明层次结构在计算机中的普遍性。'},
+          {stage:'新授', min:20, text:'给出二叉树的递归定义，逐个演示三种遍历的访问次序，边讲边在板书上标注访问编号。'},
+          {stage:'练习', min:15, text:'给出三棵不同的树，学生独立写出遍历序列并互相校对。'},
+          {stage:'总结', min:5, text:'归纳“先序定根、中序分左右”的结论。'}
+        ],
+        board:'画出示例树的递归访问编号图，并以三种颜色区分先序、中序、后序遍历路径。',
+        homework:'完成教材第 6 章习题 3、4，并尝试用递归写出三种遍历的伪代码。'
+      }
+    },
+    form:{ courseName:'', courseIntro:'', theme:'', audience:'', duration:'', type:'理论', goal:'' },
+    ui:{ collapsed:{} },
+    route:'login', params:{}, history:[]
+  };
+}
+let S = seed();
+const timers = [];
+const after = (ms, fn) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
+
+const course = id => S.courses.find(c => c.id === id) || S.courses[0];
+const allPlans = () => S.courses.flatMap(c => c.plans.map(p => ({ ...p, courseId:c.id, courseName:c.name })));
+const findPlan = id => allPlans().find(p => p.id === id);
+const livePlan = id => {
+  for(const c of S.courses){ const p = c.plans.find(x => x.id === id); if(p) return p; }
+  return null;
+};
+const draftCount = () => allPlans().filter(p => p.status === 'draft').length;
+const finalCount = () => allPlans().filter(p => p.status === 'final').length;
+const srcDoc = () => ($('.viewport .doc-src') && $('.viewport .doc-src').src) || '';
+
+/* ============================================================
+   2. 路由
+   ============================================================ */
+const TAB = ['home','courses','me'];
+const ROUTES = {
+  login:          { title:'', tab:false, back:false },
+  home:           { title:'PrepPal 智能备课', tab:true, back:false },
+  courses:        { title:'课程', tab:true, back:false },
+  me:             { title:'我的', tab:true, back:false },
+  'course-new':   { title:'新建课程', tab:false, back:true },
+  'course-detail':{ title:'课程详情', tab:false, back:true },
+  materials:      { title:'教学资料', tab:false, back:true },
+  upload:         { title:'上传资料', tab:false, back:true },
+  'plan-generate':{ title:'生成教案', tab:false, back:true },
+  'plan-generating':{ title:'生成教案草稿', tab:false, back:true },
+  'plan-detail':  { title:'教案', tab:false, back:true },
+  plans:          { title:'课程教案', tab:false, back:true }
+};
+const NAV = [
+  ['login','1  微信登录页'],
+  ['home','2  首页（工作台）'],
+  ['courses','3  课程列表页'],
+  ['course-new','4  新建课程页'],
+  ['course-detail','5  课程详情页'],
+  ['materials','6  教学资料列表页'],
+  ['upload','7  上传资料页'],
+  ['plan-generate','8  生成教案页'],
+  ['plan-generating','8b 生成中 / 超时失败'],
+  ['plan-detail','9  教案详情·编辑页'],
+  ['plans','10 教案列表页'],
+  ['me','11 我的页']
+];
+
+function nav(route, params = {}, opt = {}){
+  clearTimers();
+  if(opt.back){
+    const prev = S.history.pop() || 'home';
+    S.route = prev; S.params = S.histParams ? (S.histParams.pop() || {}) : {};
+  } else {
+    if(S.route && S.route !== route) S.history.push(S.route);
+    S.route = route; S.params = params;
+  }
+  render();
+}
+function goTab(route){ clearTimers(); S.history = []; S.route = route; S.params = {}; render(); }
+
+function render(){
+  const meta = ROUTES[S.route] || ROUTES.home;
+  const prevTop = $('.viewport').scrollTop;
+  const view = $('.viewport');
+  const out = screens[S.route](meta);
+  view.innerHTML = out;
+  view.scrollTop = 0;
+  // 导航栏
+  $('#navbar').innerHTML =
+    (meta.back ? '<button class="nav-back" data-act="back" aria-label="返回">' + I.back + '</button>' : '') +
+    '<div class="nav-title">' + esc(meta.title) + '</div>' +
+    '<div class="capsule"><span class="dots"><i></i><i></i><i></i></span><span class="div"></span>' +
+    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="2.4"/></svg></div>';
+  // Tab Bar
+  const tb = $('#tabbar');
+  tb.classList.toggle('hide', !meta.tab);
+  tb.innerHTML = meta.tab ? [
+    ['home','首页',I.home],['courses','课程',I.grid],['me','我的',I.user]
+  ].map(([r,l,ic]) => '<button class="tab' + (S.route === r ? ' active' : '') + '" data-tab="' + r + '">' + ic + '<span>' + l + '</span></button>').join('') : '';
+  // 侧边导航高亮
+  $$('#navlist button').forEach(b => b.classList.toggle('active', b.dataset.route === S.route));
+  const active = $('#navlist button.active');
+  if(active) active.scrollIntoView({ block:'nearest' });
+  // 页面进入后的副作用
+  if(hooks[S.route]) hooks[S.route]();
+}
+
+/* ============================================================
+   3. 页面
+   ============================================================ */
+const screens = {};
+
+/* ---- 1. 登录 ---- */
+screens.login = () => {
+  const points = [
+    ['基于课程资料生成','优先引用你上传的 txt / md 教学资料，而不是泛泛而谈。'],
+    ['引用可追溯','每条内容都能对回资料的具体段落，方便课前核对。'],
+    ['草稿与定稿可管理','先存草稿随时修改，确认后标记定稿归档到课程下。']
+  ];
+  return '<div class="page login">' +
+    '<div class="login-hero">' +
+      '<div class="logo">' +
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M4 5.4A2.4 2.4 0 0 1 6.4 3H13l2.6 2.8h2A2.4 2.4 0 0 1 20 8.2v9.4A2.4 2.4 0 0 1 17.6 20H6.4A2.4 2.4 0 0 1 4 17.6z"/>' +
+          '<path d="M12.2 9.6v4.6M9.9 11.9h4.6"/><path d="M8.6 17.2h6.8"/>' +
+        '</svg></div>' +
+      '<h1>PrepPal 智能备课</h1>' +
+      '<p class="tagline">让备课从小时级缩短到分钟级</p>' +
+      '<div class="points">' + points.map(([t,d]) =>
+        '<div class="point"><span class="pi">' + I.check + '</span><span><b>' + t + '</b><br>' + d + '</span></div>').join('') + '</div>' +
+    '</div>' +
+    '<div class="login-actions">' +
+      '<button class="btn btn-primary btn-block" data-act="login" id="loginBtn">' + I.wechat + '微信一键登录</button>' +
+      '<p class="legal">仅用于创建你的个人备课空间，不会获取你的通讯录与聊天内容。<br>登录即表示同意 <a data-act="legal">用户协议</a> 与 <a data-act="legal">隐私政策</a></p>' +
+    '</div></div>';
+};
+
+/* ---- 2. 首页 ---- */
+screens.home = () => {
+  const empty = S.demo.empty || S.courses.length === 0;
+  const head =
+    '<div class="home-head"><div>' +
+      '<p class="greet">上午好，' + esc(S.user.name) + '</p>' +
+      '<p class="sub">' + (empty ? '先创建一门课程，PrepPal 才能结合你的资料备课' : '今天也把备课交给 PrepPal') + '</p>' +
+    '</div>' +
+    '<button class="avatar-btn" data-tab="me" aria-label="我的">' + esc(S.user.name[0]) + '</button></div>';
+
+  const cta =
+    '<div class="cta-card">' +
+      '<div class="cta-top"><h2>开始生成教案</h2><span class="cta-badge">约 2 分钟完成初稿</span></div>' +
+      '<p>结合课程资料，快速生成可编辑教案</p>' +
+      '<button class="btn" data-act="quickGen">' + I.spark + '开始生成教案</button>' +
+    '</div>';
+
+  if(empty){
+    return '<div class="page">' + head + cta +
+      '<section class="sec"><div class="card"><div class="empty">' +
+        '<div class="art">' + I.emptyCourse + '</div>' +
+        '<h4>还没有课程</h4>' +
+        '<p>创建第一门课程，上传 txt / md 教学资料，就能生成带来源说明的教案草稿。</p>' +
+        '<button class="btn btn-primary btn-sm" data-nav="course-new">' + I.plus + '创建第一门课程</button>' +
+      '</div></div></section>' +
+      '<section class="sec"><div class="card" style="padding:14px">' +
+        '<div class="sec-head" style="margin-bottom:6px"><h3>三步完成备课</h3></div>' +
+        ['建立课程并上传教学资料','填写教学主题、对象与课时','AI 生成草稿，核对来源后定稿'].map((t,i) =>
+          '<div class="goal-row"><span class="goal-key">0' + (i+1) + '</span><div class="tl-text">' + t + '</div></div>').join('') +
+      '</div></section></div>';
+  }
+
+  const stats =
+    '<div class="stat-row">' +
+      '<div class="stat"><div class="n">' + S.courses.length + '<small>门</small></div><div class="l">我的课程</div></div>' +
+      '<div class="stat accent"><div class="n">' + draftCount() + '<small>份</small></div><div class="l">教案草稿</div></div>' +
+      '<div class="stat"><div class="n">' + finalCount() + '<small>份</small></div><div class="l">已定稿</div></div>' +
+    '</div>';
+
+  const recentCourse = S.courses.slice().sort((a,b) => b.ts - a.ts)[0];
+  const courseCard =
+    '<div class="card course-card" data-nav="course-detail" data-course="' + recentCourse.id + '">' +
+      '<div class="fileicon big">' + I.book + '</div>' +
+      '<div class="grow">' +
+        '<p class="name">' + esc(recentCourse.name) + '<span class="chip neutral">最近使用</span></p>' +
+        '<p class="m">' + recentCourse.materials.length + ' 份资料 ｜ ' + recentCourse.plans.length + ' 份教案 ｜ ' + esc(recentCourse.updated) + '</p>' +
+      '</div>' + I.chev +
+    '</div>';
+
+  const plans = allPlans().sort((a,b) => b.ts - a.ts).slice(0,3);
+  const planList = plans.map(p =>
+    '<div class="li" data-nav="plan-detail" data-plan="' + p.id + '">' +
+      '<div class="grow">' +
+        '<p class="t">' + esc(p.title) + chip(p.status) + '</p>' +
+        '<p class="m"><span>' + esc(p.courseName) + '</span><span>·</span><span>' + esc(p.theme) + '</span><span>·</span><span>' + esc(p.updated) + '</span></p>' +
+      '</div>' + I.chev +
+    '</div>').join('');
+
+  return '<div class="page">' + head + cta + stats +
+    '<section class="sec"><div class="sec-head"><h3>最近使用课程</h3><a data-tab="courses">全部课程</a></div>' +
+      courseCard + '</section>' +
+    '<section class="sec"><div class="sec-head"><h3>最近教案</h3><a data-nav="plans" data-course="' + recentCourse.id + '">查看全部</a></div>' +
+      '<div class="card">' + planList + '</div></section></div>';
+};
+
+/* ---- 3. 课程列表 ---- */
+screens.courses = () => {
+  const head = '<div class="sec-head" style="margin:10px 2px 12px"><h1 class="page-title" style="margin:0">我的课程</h1>' +
+    '<button class="btn btn-soft btn-sm" data-nav="course-new">' + I.plus + '新建课程</button></div>';
+  if(S.demo.empty || S.courses.length === 0){
+    return '<div class="page">' + head +
+      '<div class="card"><div class="empty"><div class="art">' + I.emptyCourse + '</div>' +
+      '<h4>还没有课程</h4><p>课程是你备课的容器：资料、教案都会归到同一门课程下。</p>' +
+      '<button class="btn btn-primary btn-sm" data-nav="course-new">' + I.plus + '创建第一门课程</button></div></div></div>';
+  }
+  const list = S.courses.map(c =>
+    '<div class="card course-card" data-nav="course-detail" data-course="' + c.id + '">' +
+      '<div class="fileicon big">' + I.book + '</div>' +
+      '<div class="grow"><p class="name">' + esc(c.name) + '</p>' +
+      '<p class="m" style="line-height:1.6">' + esc(c.intro) + '</p>' +
+      '<div class="pill-row"><span class="pill">' + c.materials.length + ' 份资料</span><span class="pill">' + c.plans.length + ' 份教案</span>' +
+      '<span class="pill">更新于 ' + esc(c.updated) + '</span></div></div>' + I.chev +
+    '</div>').join('<div style="height:10px"></div>');
+  return '<div class="page">' + head + list + '</div>';
+};
+
+/* ---- 4. 新建课程 ---- */
+screens['course-new'] = () => {
+  const f = S.form;
+  return '<div class="page">' +
+    '<h1 class="page-title" style="margin-top:8px">新建课程</h1>' +
+    '<p class="page-sub">课程名称会显示在教案封面与来源说明中，建议使用教务系统里的规范名称。</p>' +
+    '<div class="page-body">' +
+      '<div class="card" style="padding:16px">' +
+        '<div class="field" id="fName"><label>课程名称 <span class="req">*</span></label>' +
+          '<input class="input" data-form="courseName" placeholder="例如：大学物理" value="' + esc(f.courseName) + '" maxlength="24">' +
+          '<p class="err">请填写课程名称（2–24 个字）</p></div>' +
+        '<div class="field" style="margin-bottom:0"><label>课程简介 <span class="opt">选填</span></label>' +
+          '<textarea class="textarea" data-form="courseIntro" placeholder="一句话说明授课对象与课程重点，例如：面向理工科一年级，讲授力学与电磁学基础。">' + esc(f.courseIntro) + '</textarea></div>' +
+      '</div>' +
+      '<div class="hint-box" style="margin-top:14px">' + I.info +
+        '<span>创建后可以在这门课程下<b>上传教学资料</b>并生成教案。资料越具体，教案的引用越可信。</span></div>' +
+    '</div>' +
+    '<div class="bottom-bar"><button class="btn btn-primary btn-block" data-act="createCourse">创建课程</button></div></div>';
+};
+
+function chip(status){
+  return status === 'final'
+    ? '<span class="chip final"><span class="chip-dot" style="background:currentColor"></span>已定稿</span>'
+    : '<span class="chip draft"><span class="chip-dot" style="background:currentColor"></span>草稿</span>';
+}
+function matChip(m){
+  if(m.status === 'ok') return '<span class="chip ok">解析成功</span>';
+  if(m.status === 'loading') return '<span class="chip load">解析中</span>';
+  return '<span class="chip err">解析失败</span>';
+}
+
+/* ---- 5. 课程详情 ---- */
+screens['course-detail'] = () => {
+  const c = course(S.params.course || 'phys');
+  const matPreview = c.materials.slice(0,3).map(m =>
+    '<div class="li" data-nav="materials" data-course="' + c.id + '">' +
+      '<div class="fileicon ' + m.ext.toLowerCase() + '">' + m.ext + '</div>' +
+      '<div class="grow"><p class="t">' + esc(m.name) + '</p>' +
+      '<p class="m">' + esc(m.size) + '<span>·</span>' + esc(m.time) + '</p></div>' + matChip(m) + '</div>').join('');
+
+  const planPreview = c.plans.length ? c.plans.slice(0,3).map(p =>
+    '<div class="li" data-nav="plan-detail" data-plan="' + p.id + '">' +
+      '<div class="grow"><p class="t">' + esc(p.title) + chip(p.status) + '</p>' +
+      '<p class="m"><span>' + esc(p.theme) + '</span><span>·</span><span>' + p.duration + ' 分钟</span><span>·</span><span>' + esc(p.updated) + '</span></p></div>' + I.chev +
+    '</div>').join('') :
+    '<div class="empty" style="padding:30px 20px"><div class="art">' + I.emptyPlan + '</div>' +
+      '<h4>这门课程还没有教案</h4><p>生成第一份教案，课后可随时修改或标记定稿。</p>' +
+      '<button class="btn btn-primary btn-sm" data-nav="plan-generate" data-course="' + c.id + '">' + I.spark + '生成该课程第一份教案</button></div>';
+
+  const matHint = c.materials.length === 0
+    ? '<div class="notice warn" style="margin-top:10px">' + I.warn +
+      '<span class="ic"></span><span>还没有教学资料。先上传 txt 或 md 教学资料，生成的教案会带上可追溯的来源说明。</span></div>'
+    : '<div class="notice ok" style="margin-top:10px"><span class="ic">' + I.check + '</span>' +
+      '<span>已有 ' + c.materials.filter(m => m.status === 'ok').length + ' 份资料可用于引用，生成教案时会优先参考。</span></div>';
+
+  return '<div class="page">' +
+    '<div class="course-hero" style="margin-top:6px">' +
+      '<button class="more" data-act="courseMore" data-course="' + c.id + '" aria-label="更多">' + I.dots + '</button>' +
+      '<h2>' + esc(c.name) + '</h2><p>' + esc(c.intro) + '</p>' +
+    '</div>' +
+    '<div class="two-cards">' +
+      '<div class="mini-card" data-nav="materials" data-course="' + c.id + '"><div class="h">' + I.layer + '教学资料</div>' +
+        '<div class="v">' + c.materials.length + '<small>份</small></div></div>' +
+      '<div class="mini-card" data-nav="plans" data-course="' + c.id + '"><div class="h">' + I.plan + '教案</div>' +
+        '<div class="v">' + c.plans.length + '<small>份</small></div></div>' +
+    '</div>' +
+    '<div class="bottom-bar" style="position:static;margin:14px 0 0;padding:0;background:none;border:0;flex-direction:row;gap:10px;display:flex">' +
+      '<button class="btn btn-ghost" style="flex:1" data-nav="upload" data-course="' + c.id + '">' + I.upload + '上传资料</button>' +
+      '<button class="btn btn-primary" style="flex:1.25" data-nav="plan-generate" data-course="' + c.id + '">' + I.spark + '生成教案</button>' +
+    '</div>' +
+    '<section class="sec"><div class="sec-head"><h3>教学资料</h3><a data-nav="materials" data-course="' + c.id + '">查看全部</a></div>' +
+      (c.materials.length ? '<div class="card">' + matPreview + '</div>' + matHint :
+        '<div class="card"><div class="empty" style="padding:28px 20px"><div class="art">' + I.emptyDoc + '</div><h4>还没有教学资料</h4>' +
+        '<p>目前仅支持 .txt、.md 文件，单个文件不超过 5MB。</p>' +
+        '<button class="btn btn-ghost btn-sm" data-nav="upload" data-course="' + c.id + '">' + I.upload + '上传第一份资料</button></div></div>') +
+    '</section>' +
+    '<section class="sec"><div class="sec-head"><h3>课程教案</h3><a data-nav="plans" data-course="' + c.id + '">查看全部</a></div>' +
+      '<div class="card">' + planPreview + '</div></section>' +
+  '</div>';
+};
+
+/* ---- 6. 教学资料列表 ---- */
+screens.materials = () => {
+  const c = course(S.params.course || 'phys');
+  const head = '<div class="sec-head" style="margin:8px 2px 12px"><div>' +
+    '<h1 class="page-title" style="margin:0">教学资料</h1>' +
+    '<p class="page-sub" style="margin:4px 0 0">所属课程：' + esc(c.name) + '</p></div>' +
+    '<button class="btn btn-soft btn-sm" data-nav="upload" data-course="' + c.id + '">' + I.upload + '上传资料</button></div>';
+
+  if(!c.materials.length){
+    return '<div class="page">' + head +
+      '<div class="card"><div class="empty"><div class="art">' + I.emptyDoc + '</div>' +
+      '<h4>还没有教学资料</h4>' +
+      '<p>目前仅支持 .txt、.md 文件，单个文件不超过 5MB。上传后教案会引用这些资料的具体段落。</p>' +
+      '<button class="btn btn-primary btn-sm" data-nav="upload" data-course="' + c.id + '">' + I.upload + '上传资料</button></div></div></div>';
+  }
+
+  const items = c.materials.map(m => {
+    const actions = m.status === 'bad'
+      ? '<div style="display:flex;gap:8px;margin-top:9px"><button class="btn btn-ghost btn-sm" data-act="why" data-mat="' + m.id + '" data-course="' + c.id + '">查看原因</button>' +
+        '<button class="btn btn-soft btn-sm" data-act="reupload" data-mat="' + m.id + '" data-course="' + c.id + '">重新上传</button></div>'
+      : (m.status === 'loading' ? '<p class="m" style="margin-top:7px">正在解析内容，完成后即可用于生成教案…</p>' : '');
+    return '<div class="li" style="align-items:flex-start;cursor:default" data-row="' + m.id + '">' +
+      '<div class="fileicon ' + m.ext.toLowerCase() + '">' + m.ext + '</div>' +
+      '<div class="grow">' +
+        '<p class="t" style="padding-right:2px">' + esc(m.name) + '</p>' +
+        '<p class="m"><span class="chip neutral">' + m.ext + '</span><span>' + esc(m.size) + '</span><span>·</span><span>' + esc(m.time) + '</span></p>' +
+        '<div style="margin-top:8px">' + matChip(m) + '</div>' + actions +
+      '</div>' +
+      '<button class="btn btn-sm" style="padding:7px;color:var(--ink-3)" data-act="delMat" data-mat="' + m.id + '" data-course="' + c.id + '" aria-label="删除资料">' + I.trash + '</button>' +
+    '</div>';
+  }).join('');
+
+  return '<div class="page">' + head +
+    '<div class="hint-box" style="margin-bottom:12px">' + I.info +
+      '<span>资料会按段落切分为引用单元。生成教案时，AI 会在<b>参考资料</b>中标出用到的文件与段落。</span></div>' +
+    '<div class="card">' + items + '</div>' +
+    '<div class="bottom-bar"><button class="btn btn-primary btn-block" data-nav="upload" data-course="' + c.id + '">' + I.upload + '上传资料</button></div></div>';
+};
+
+/* ---- 7. 上传资料 ---- */
+const PICKABLE = [
+  { key:'ok1', name:'热学与热力学基础.md', ext:'MD', size:'264 KB', ok:true },
+  { key:'ok2', name:'实验讲义-验证牛顿第二定律.txt', ext:'TXT', size:'128 KB', ok:true },
+  { key:'bad', name:'旧版力学讲义.txt', ext:'TXT', size:'1.8 MB', ok:false,
+    reason:'文件编码为 GBK，解析在读到第 41 行时中断。请另存为 UTF-8 编码的 .txt 后重新上传。' },
+  { key:'big', name:'课程录音整理.txt', ext:'TXT', size:'6.4 MB', ok:false, tooBig:true }
+];
+screens.upload = () => {
+  const c = course(S.params.course || 'phys');
+  const pickedKey = S.params.pick || '';
+  const picked = PICKABLE.find(p => p.key === pickedKey);
+  const stage = S.params.stage || 'pick'; // pick | uploading | done | failed | error
+
+  let selected = '';
+  if(picked){
+    const isErr = stage === 'error';
+    selected =
+      '<div class="card" style="padding:14px;margin-top:14px" id="upBox">' +
+        '<div style="display:flex;gap:12px;align-items:center">' +
+          '<div class="fileicon big ' + (picked.ext || 'txt').toLowerCase() + '">' + picked.ext + '</div>' +
+          '<div class="grow" style="flex:1;min-width:0">' +
+            '<p style="margin:0;font-size:14px;font-weight:650;letter-spacing:-.2px">' + esc(picked.name) + '</p>' +
+            '<p class="m" style="margin:5px 0 0"><span>' + esc(picked.size) + '</span></p>' +
+            '<p class="m" style="margin:4px 0 0"><span>所属课程：' + esc(c.name) + '</span></p>' +
+          '</div>' +
+          (stage === 'pick' || isErr ? '<button class="btn btn-sm" style="padding:7px;color:var(--ink-3)" data-act="clearPick" aria-label="移除">' + I.trash + '</button>' : '') +
+        '</div>' +
+        (isErr ? '<div class="notice warn" style="margin-top:12px">' + I.warn + '<span class="ic"></span><span>单个文件不超过 <b>5MB</b>，当前为 6.4MB。请压缩内容或拆分为多份后再上传。</span></div>' : '') +
+        (stage === 'uploading' ?
+          '<div style="margin-top:14px"><div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-3);margin-bottom:7px">' +
+            '<span id="upTxt">正在上传…</span><span id="upPct">0%</span></div>' +
+            '<div class="progress"><i id="upBar"></i></div>' +
+            '<p class="m" style="margin:9px 0 0">上传完成后会自动解析，无需手动操作。</p></div>' : '') +
+        (stage === 'done' ?
+          '<div class="notice ok" style="margin-top:14px"><span class="ic">' + I.check + '</span>' +
+          '<span><b>资料已解析，可用于生成教案。</b>已生成 46 个引用段，生成教案时会优先参考。</span></div>' : '') +
+        (stage === 'failed' ?
+          '<div class="notice warn" style="margin-top:14px">' + I.warn +
+          '<span class="ic"></span><span><b>解析失败：</b>' + esc(picked.reason || '文件内容无法读取。') + '</span></div>' : '') +
+      '</div>';
+  }
+
+  const pickList =
+    '<div class="card" style="margin-top:14px;overflow:hidden"><div class="sec-head" style="margin:0;padding:12px 14px 8px">' +
+      '<h3 style="font-size:12.5px;color:var(--ink-3);font-weight:600">从本机选择（原型示例文件）</h3></div>' +
+      PICKABLE.map(p =>
+        '<div class="pick-li" data-act="pick" data-key="' + p.key + '" data-course="' + c.id + '">' +
+          '<div class="fileicon ' + p.ext.toLowerCase() + '">' + p.ext + '</div>' +
+          '<div style="flex:1;min-width:0"><p style="margin:0;font-size:13.5px;font-weight:600">' + esc(p.name) + '</p>' +
+          '<p class="m" style="margin:4px 0 0">' + esc(p.size) + (p.tooBig ? ' · 超出 5MB' : '') + '</p></div>' +
+          (pickedKey === p.key ? '<span class="chip load">已选择</span>' : I.chev) +
+        '</div>').join('') + '</div>';
+
+  let bottom = '';
+  if(stage === 'pick' || stage === 'error'){
+    bottom = '<button class="btn btn-primary btn-block" data-act="doUpload" ' + (picked ? '' : 'disabled') + '>' + I.upload + '上传并解析</button>' +
+      '<p class="bar-hint">' + (picked ? '仅支持 TXT、MD，≤5MB' : '请先选择要上传的文件') + '</p>';
+  } else if(stage === 'uploading'){
+    bottom = '<button class="btn btn-primary btn-block" disabled><span class="spinner"></span>正在上传…</button>' +
+      '<p class="bar-hint">请保持页面开启，解析完成后会给出提示</p>';
+  } else if(stage === 'done'){
+    bottom = '<div class="row"><button class="btn btn-ghost" data-nav="materials" data-course="' + c.id + '">返回教学资料</button>' +
+      '<button class="btn btn-primary" data-nav="plan-generate" data-course="' + c.id + '">去生成教案</button></div>';
+  } else {
+    bottom = '<div class="row"><button class="btn btn-ghost" data-act="pick" data-key="' + pickedKey + '" data-course="' + c.id + '">重新选择</button>' +
+      '<button class="btn btn-primary" data-act="doUpload">重试上传</button></div>';
+  }
+
+  return '<div class="page">' +
+    '<div class="dropzone" data-act="pickRandom" data-course="' + c.id + '">' +
+      '<div class="ico">' + I.upload + '</div>' +
+      '<h4>选择教学资料文件</h4>' +
+      '<p>仅支持 TXT、MD，单个文件 ≤ 5MB</p>' +
+    '</div>' +
+    (picked ? selected : '') +
+    (stage === 'pick' || stage === 'error' ? pickList : '') +
+    '<div class="bottom-bar">' + bottom + '</div></div>';
+};
+
+/* ---- 8. 生成教案 ---- */
+screens['plan-generate'] = () => {
+  const c = course(S.params.course || 'phys');
+  const f = S.form;
+  const types = ['理论','实验','研讨','习题'];
+  const okMats = c.materials.filter(m => m.status === 'ok');
+  return '<div class="page">' +
+    '<div class="sec" style="margin-top:8px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+        ['填写信息','生成草稿','编辑定稿'].map((t,i) =>
+          '<div style="flex:1;display:flex;align-items:center;gap:6px">' +
+          '<span class="chip ' + (i === 0 ? 'load' : 'neutral') + '" style="padding:3px 8px">' + (i+1) + '</span>' +
+          '<span style="font-size:11.5px;font-weight:' + (i === 0 ? '700' : '500') + ';color:' + (i === 0 ? 'var(--brand)' : 'var(--ink-3)') + '">' + t + '</span>' +
+          (i < 2 ? '<span style="flex:1;height:1px;background:var(--line)"></span>' : '') + '</div>').join('') +
+      '</div></div>' +
+    '<h1 class="page-title">生成教案</h1>' +
+    '<p class="page-sub">填写教学信息，PrepPal 会结合本课程资料生成可编辑的教案草稿。</p>' +
+    '<div class="page-body">' +
+      '<div class="card" style="padding:16px">' +
+        '<div class="field"><label>所属课程</label>' +
+          '<div class="picker-row" data-act="pickCourse"><span>' + esc(c.name) + '</span>' +
+          '<span style="display:flex;align-items:center;gap:6px;color:var(--ink-3);font-size:12.5px">切换' + I.chev + '</span></div></div>' +
+        '<div class="field" id="fTheme"><label>教学主题 <span class="req">*</span></label>' +
+          '<input class="input" data-form="theme" placeholder="例如：牛顿第二定律" value="' + esc(f.theme) + '" maxlength="40">' +
+          '<p class="err">请填写教学主题</p></div>' +
+        '<div class="field" id="fAud"><label>授课对象 <span class="req">*</span></label>' +
+          '<input class="input" data-form="audience" placeholder="例如：大学一年级理工科" value="' + esc(f.audience) + '" maxlength="30">' +
+          '<p class="err">请填写授课对象</p></div>' +
+        '<div class="field" id="fDur"><label>课时长 <span class="req">*</span></label>' +
+          '<div style="display:flex;align-items:center;gap:10px">' +
+            '<input class="input" data-form="duration" inputmode="numeric" placeholder="例如：45" value="' + esc(f.duration) + '" style="flex:1">' +
+            '<span style="font-size:13.5px;color:var(--ink-2);font-weight:600">分钟</span></div>' +
+          '<p class="err">请输入 10–180 之间的正整数</p></div>' +
+        '<div class="field"><label>教学类型 <span class="req">*</span></label>' +
+          '<div class="seg" data-seg="type">' + types.map(t =>
+            '<button class="' + (f.type === t ? 'on' : '') + '" data-act="setType" data-val="' + t + '">' + t + '</button>').join('') + '</div></div>' +
+        '<div class="field" style="margin-bottom:0"><label>自定义教学目标 <span class="opt">选填</span></label>' +
+          '<textarea class="textarea" data-form="goal" placeholder="例如：希望学生能独立完成受力分析并解释生活中的加速度现象。">' + esc(f.goal) + '</textarea></div>' +
+      '</div>' +
+      '<div class="hint-box" style="margin-top:14px">' + I.info +
+        '<span>将优先参考本课程已上传的教学资料' +
+        (okMats.length ? '（' + okMats.map(m => esc(m.name)).join('、') + '）' : '：本课程暂无可用资料，将基于通用知识生成') +
+        '。</span></div>' +
+    '</div>' +
+    '<div class="bottom-bar"><button class="btn btn-primary btn-block" data-act="gen">' + I.spark + '生成教案草稿</button>' +
+      '<p class="bar-hint">预计 1–2 分钟，生成后可随时编辑</p></div></div>';
+};
+
+/* ---- 8b. 生成中 / 超时 ---- */
+screens['plan-generating'] = () => {
+  const meta = S.params.meta || {};
+  return '<div class="page" style="padding-top:0">' +
+    '<div class="gen-wrap" id="genWrap">' +
+      '<div class="orb">AI</div>' +
+      '<h2 id="genTitle">正在检索相关资料并生成教案</h2>' +
+      '<p class="gen-sub" id="genSub">正在检索相关资料并生成教案，请稍候…<br>已按“' + esc(meta.theme || '牛顿第二定律') + '”整理 ' + (meta.mats || 2) + ' 份资料</p>' +
+      '<div class="progress" style="width:100%"><i id="genBar"></i></div>' +
+      '<ul class="steps" id="genSteps">' +
+        '<li data-step="1"><span class="dot"></span>检索课程资料并定位相关段落</li>' +
+        '<li data-step="2"><span class="dot"></span>组织教学目标与教学过程</li>' +
+        '<li data-step="3"><span class="dot"></span>生成引用来源说明</li>' +
+      '</ul>' +
+      '<div class="gen-refs">本次参考：' + esc(meta.refs || '大学物理第一章.md、牛顿运动定律.txt') + '</div>' +
+    '</div></div>';
+};
+
+/* ---- 9. 教案详情 / 编辑 ---- */
+screens['plan-detail'] = () => {
+  const p = findPlan(S.params.plan || 'p1') || allPlans()[0];
+  const c = course(p.courseId);
+  const body = S.planBody[p.id] || S.planBody.p1;
+  const noRefs = S.demo.noRefs || !p.refs || p.refs.length === 0;
+  const editable = p.status === 'draft';
+  const ce = editable ? ' contenteditable="true"' : '';
+  const totMin = body.process.reduce((n, x) => n + Number(x.min), 0);
+
+  const sec = (id, icon, title, extra, inner) =>
+    '<div class="card collapse ' + (S.ui.collapsed[id] ? '' : 'open') + '" data-collapse="' + id + '" style="margin-top:11px">' +
+      '<div class="collapse-head" data-act="toggle" data-id="' + id + '"><span class="ic">' + icon + '</span>' +
+      '<h3>' + title + '</h3>' + (extra || '') + I.chevDown + '</div>' +
+      '<div class="collapse-body">' + inner + '</div></div>';
+
+  const goals =
+    '<div class="goal-row"><span class="goal-key">知识</span><div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="goal.knowledge">' + esc(body.goal.knowledge) + '</div></div>' +
+    '<div class="goal-row"><span class="goal-key k2">能力</span><div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="goal.ability">' + esc(body.goal.ability) + '</div></div>' +
+    '<div class="goal-row"><span class="goal-key k3">素养</span><div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="goal.literacy">' + esc(body.goal.literacy) + '</div></div>';
+
+  const timeline = body.process.map((it, i) =>
+    '<div class="tl-item"><div class="tl-head"><span class="tl-stage editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-proc="' + i + '" data-field="stage">' + esc(it.stage) + '</span>' +
+    '<span class="tl-min editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-proc="' + i + '" data-field="min">' + it.min + ' 分钟</span></div>' +
+    '<div class="tl-text editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-proc="' + i + '" data-field="text">' + esc(it.text) + '</div></div>').join('');
+
+  const refs = noRefs
+    ? '<div class="notice warn">' + I.warn + '<span class="ic"></span><span>以下内容基于通用知识生成，未参考到相关上传资料。</span></div>' +
+      '<p class="m" style="margin:11px 2px 0;font-size:11.5px;color:var(--ink-3);line-height:1.7">上传与“' + esc(p.theme) + '”相关的 txt / md 资料后重新生成，即可获得可追溯的引用说明。</p>' +
+      '<button class="btn btn-ghost btn-sm" style="margin-top:11px" data-nav="upload" data-course="' + c.id + '">' + I.upload + '为《' + esc(c.name) + '》补充资料</button>'
+    : '<div class="ref-item"><span class="doc">' + I.doc + '</span><div><div class="fn">《' + esc(p.refs[0].file) + '》</div>' +
+        '<div class="sec-txt">' + esc(p.refs[0].sec) + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div></div></div>' +
+      (p.refs[1] ? '<div class="ref-item"><span class="doc">' + I.doc + '</span><div><div class="fn">《' + esc(p.refs[1].file) + '》</div>' +
+        '<div class="sec-txt">' + esc(p.refs[1].sec) + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div></div></div>' : '') +
+      '<p style="margin:11px 0 0;font-size:11.5px;color:var(--ink-3);line-height:1.7">以上为生成时实际引用的资料位置，点击可回到原文核对。</p>';
+
+  const bottom = p.status === 'draft'
+    ? '<div class="row"><button class="btn btn-ghost" data-act="saveDraft" data-plan="' + p.id + '">保存草稿</button>' +
+      '<button class="btn btn-primary" data-act="finalize" data-plan="' + p.id + '">标记为定稿</button></div>' +
+      '<p class="bar-hint">' + (editable ? '正文区块可直接点击编辑' : '点击“编辑”后可修改内容') + '</p>'
+    : '<button class="btn btn-ghost btn-block" data-act="editFinal" data-plan="' + p.id + '">' + I.edit + '编辑教案</button>' +
+      '<p class="bar-hint">已定稿，编辑后可再次标记定稿</p>';
+
+  return '<div class="page" style="padding-top:6px">' +
+    '<div style="display:flex;align-items:flex-start;gap:10px;padding:2px 2px 0">' +
+      '<div style="flex:1;min-width:0"><h1 class="page-title" style="font-size:21px;margin:0">' + esc(p.title) + chip(p.status) + '</h1>' +
+      '<p class="m" style="margin:9px 0 0;font-size:11.5px;color:var(--ink-3)">' + esc(c.name) + ' · ' + esc(p.theme) + ' · ' + p.duration + ' 分钟 · ' + esc(p.audience) + '</p></div>' +
+      '<button class="btn btn-sm" style="padding:8px;color:var(--ink-3)" data-act="planMore" data-plan="' + p.id + '" aria-label="更多">' + I.dots + '</button>' +
+    '</div>' +
+    '<p class="edit-hint" style="margin-top:10px">' + (editable ? I.edit + ' 点击任意内容即可直接编辑，来源与结构由 PrepPal 保持' : I.shield + ' 内容已定稿，如需修改请点击下方“编辑教案”') + '</p>' +
+    (editable ? '' : '<div class="notice info" style="margin-bottom:2px">' + I.info + '<span class="ic"></span><span>这份教案已定稿。定稿后仍可再次编辑，重新编辑会先回到草稿状态。</span></div>') +
+
+    sec('goal', I.target, '教学目标', '<span class="tag-soft">知识 / 能力 / 素养</span>', goals) +
+    sec('key', I.layer, '教学重点', '', '<div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="key">' + esc(body.key) + '</div>') +
+    sec('diff', I.warn, '教学难点', '', '<div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="diff">' + esc(body.diff) + '</div>') +
+    sec('process', I.clock, '教学过程', '<span class="tag-soft">共 ' + totMin + ' 分钟</span>',
+        '<div class="timeline">' + timeline + '</div>') +
+    sec('board', I.board, '板书设计', '', '<div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="board">' + esc(body.board) + '</div>') +
+    sec('homework', I.plan, '作业布置', '', '<div class="editable" ' + (editable ? 'contenteditable="true"' : '') + ' data-plan="' + p.id + '" data-field="homework">' + esc(body.homework) + '</div>') +
+
+    '<div class="card" style="margin-top:11px;padding:14px">' +
+      '<div class="sec-head" style="margin-bottom:4px"><h3 style="display:flex;align-items:center;gap:7px">' + I.shield + '参考资料</h3>' +
+        (noRefs ? '<span class="chip draft">通用知识</span>' : '<span class="chip ok">引用可追溯</span>') + '</div>' +
+      refs + '</div>' +
+
+    '<div class="bottom-bar">' + bottom + '</div></div>';
+};
+
+/* ---- 10. 教案列表 ---- */
+screens.plans = () => {
+  const c = course(S.params.course || 'phys');
+  const filter = S.params.filter || 'all';
+  const all = c.plans.slice().sort((a,b) => b.ts - a.ts);
+  const list = all.filter(p => filter === 'all' || p.status === filter);
+
+  const counts = { all: all.length, draft: all.filter(p => p.status === 'draft').length, final: all.filter(p => p.status === 'final').length };
+  const seg = '<div class="seg" style="margin:10px 0 12px">' +
+    [['all','全部'],['draft','草稿'],['final','已定稿']].map(([k,l]) =>
+      '<button class="' + (filter === k ? 'on' : '') + '" data-act="filter" data-val="' + k + '" data-course="' + c.id + '">' + l + (counts[k] ? ' ' + counts[k] : '') + '</button>').join('') + '</div>';
+
+  const head = '<div style="padding:0 2px"><h1 class="page-title" style="margin-top:4px">课程教案</h1>' +
+    '<p class="page-sub" style="margin:4px 0 0">所属课程：' + esc(c.name) + '</p></div>';
+
+  if(!all.length){
+    return '<div class="page">' + head +
+      '<div class="card" style="margin-top:14px"><div class="empty"><div class="art">' + I.emptyPlan + '</div>' +
+      '<h4>还没有教案</h4><p>去生成第一份教案，PrepPal 会结合这门课程的资料写出带来源的草稿。</p>' +
+      '<button class="btn btn-primary btn-sm" data-nav="plan-generate" data-course="' + c.id + '">' + I.spark + '去生成第一份教案</button></div></div></div>';
+  }
+
+  const items = list.length ? list.map(p =>
+    '<div class="li" data-nav="plan-detail" data-plan="' + p.id + '">' +
+      '<div class="grow" style="min-width:0">' +
+        '<p class="t">' + esc(p.title) + chip(p.status) + '</p>' +
+        '<p class="m"><span>' + esc(p.theme) + '</span><span>·</span><span>' + esc(p.audience) + '</span><span>·</span><span>' + p.duration + ' 分钟</span></p>' +
+        '<p class="m" style="margin-top:5px"><span>' + esc(p.updated) + '</span>' +
+        (p.refs && p.refs.length ? '<span class="chip ok" style="padding:2px 6px">引用 ' + p.refs.length + ' 处资料</span>' : '<span class="chip draft" style="padding:2px 6px">未引用资料</span>') + '</p>' +
+      '</div>' +
+      '<button class="btn btn-sm" style="padding:7px;color:var(--ink-3)" data-act="delPlan" data-plan="' + p.id + '" data-course="' + c.id + '" aria-label="删除教案">' + I.trash + '</button>' +
+    '</div>').join('') :
+    '<div class="empty" style="padding:36px 20px"><div class="art">' + I.emptyPlan + '</div>' +
+      '<h4>没有' + (filter === 'draft' ? '草稿' : '已定稿') + '教案</h4><p>切换筛选条件，或去生成一份新的教案草稿。</p></div>';
+
+  return '<div class="page">' + head + seg + '<div class="card">' + items + '</div>' +
+    '<div class="bottom-bar"><button class="btn btn-primary btn-block" data-nav="plan-generate" data-course="' + c.id + '">' + I.spark + '生成新教案</button></div></div>';
+};
+
+/* ---- 11. 我的 ---- */
+screens.me = () => {
+  const entries = [
+    ['courses','我的课程','共 ' + S.courses.length + ' 门课程', I.book],
+    ['plans','我的草稿','' + draftCount() + ' 份待定稿', I.plan],
+    ['help','帮助与反馈','使用问题与建议反馈', I.help],
+    ['about','关于 PrepPal','版本 1.0.0 · 隐私说明', I.shield]
+  ];
+  return '<div class="page" style="padding-top:8px">' +
+    '<div class="card profile">' +
+      '<div class="avs">' + esc(S.user.real[0]) + '</div>' +
+      '<div style="flex:1;min-width:0"><p class="nm">' + esc(S.user.real) + '</p>' +
+      '<p class="meta">' + esc(S.user.org) + '<br>PrepPal 个人备课空间 · 仅本人可见</p></div>' +
+    '</div>' +
+    '<div class="stat-row" style="margin-top:12px">' +
+      '<div class="stat"><div class="n">' + S.courses.length + '<small>门</small></div><div class="l">我的课程</div></div>' +
+      '<div class="stat"><div class="n">' + draftCount() + '<small>份</small></div><div class="l">草稿</div></div>' +
+      '<div class="stat"><div class="n">' + finalCount() + '<small>份</small></div><div class="l">已定稿</div></div>' +
+    '</div>' +
+    '<section class="sec"><div class="card">' +
+      entries.map(([act,t,s,ic]) =>
+        '<div class="menu-item" data-act="' + act + '"><span class="mi-ic">' + ic + '</span>' +
+        '<div style="flex:1"><div class="mi-t">' + t + '</div><div class="mi-s">' + s + '</div></div>' + I.chev + '</div>').join('') +
+    '</div></section>' +
+    '<section class="sec"><div class="card"><div class="li" data-act="logout" style="cursor:pointer">' +
+      '<div class="grow" style="text-align:center;color:var(--danger);font-weight:600;font-size:14px">退出登录</div></div></div></section>' +
+    '<p style="text-align:center;font-size:10.5px;color:var(--ink-3);margin:16px 0 0;line-height:1.7">PrepPal 不会获取你的通讯录、聊天记录<br>所有教学资料仅用于你自己的备课</p>' +
+  '</div>';
+};
+
+/* ============================================================
+   4. 页面副作用（动画 / 进度）
+   ============================================================ */
+const hooks = {};
+
+hooks['plan-generating'] = () => {
+  const bar = $('#genBar'); if(!bar) return;
+  const steps = $$('#genSteps li');
+  const meta = S.params.meta || {};
+  const fail = S.demo.timeout;
+  let pct = 0;
+  const tick = setInterval(() => {
+    pct = Math.min(96, pct + 3 + Math.random() * 5);
+    bar.style.width = pct + '%';
+    if(pct > 30) { steps[0].className = 'done'; steps[0].querySelector('.dot').innerHTML = I.check; steps[1].className = 'doing'; }
+    if(pct > 72) { steps[1].className = 'done'; steps[1].querySelector('.dot').innerHTML = I.check; steps[2].className = 'doing'; }
+  }, 190);
+  after(2900, () => {
+    clearInterval(tick);
+    if(fail){
+      const wrap = $('#genWrap');
+      if(wrap){
+        wrap.innerHTML =
+          '<div class="orb" style="background:radial-gradient(circle at 34% 30%, #F09A9D, #E5484D 62%, #A3262B);box-shadow:0 22px 44px -18px rgba(229,72,77,.7)">!</div>' +
+          '<h2 style="margin-top:28px">生成超时，可重试</h2>' +
+          '<p class="gen-sub">已等待超过 2 分钟，可能是资料较多或网络较慢。<br>已保留你填写的教学信息。</p>' +
+          '<div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:4px">' +
+            '<button class="btn btn-primary btn-block" data-act="retryGen">重新生成</button>' +
+            '<button class="btn btn-ghost btn-block" data-act="back">返回修改教学信息</button></div>' +
+          '<div class="gen-refs" style="margin-top:16px">本次参考：' + esc(meta.refs || '大学物理第一章.md、牛顿运动定律.txt') + '<br>若多次失败，可减少资料份数后重试。</div>';
+      }
+      return;
+    }
+    bar.style.width = '100%';
+    steps.forEach(s => { s.className = 'done'; s.querySelector('.dot').innerHTML = I.check; });
+    after(340, () => {
+      // 生成新草稿
+      const c = course(meta.courseId || 'phys');
+      const id = 'p' + Math.random().toString(36).slice(2, 8);
+      const refs = (S.demo.noRefs || S.params.meta.notRef) ? [] :
+        c.materials.filter(m => m.status === 'ok').slice(0,2).map((m, i) => ({ file:m.name, ext:m.ext, sec:'# 第 ' + (3 + i * 5) + ' 段' }));
+      c.plans.unshift({
+        id, title:(meta.theme || '牛顿第二定律') + '教案', theme:meta.theme || '牛顿第二定律',
+        audience:meta.audience || '大学一年级理工科', duration:meta.duration || 45,
+        type:meta.type || '理论', status:'draft', updated:'刚刚', ts:200, refs
+      });
+      if(!S.planBody[id]){
+        S.planBody[id] = JSON.parse(JSON.stringify(S.planBody.p1));
+        if(meta.customGoal) S.planBody[id].goal.knowledge = meta.customGoal;
+        if(!refs.length){ S.planBody[id].goal.knowledge = '掌握' + (meta.theme || '本主题') + '的基本内容与常见应用场景。'; }
+      }
+      S.history = [];
+      S.route = 'plan-detail'; S.params = { plan:id };
+      render();
+      toast(refs.length ? '教案草稿已生成，引用来源已标注' : '教案草稿已生成（未引用到上传资料）');
+    });
+  });
+};
+
+hooks.upload = () => {
+  if((S.params.stage || '') !== 'uploading') return;
+  const bar = $('#upBar'), pct = $('#upPct'), txt = $('#upTxt');
+  if(!bar) return;
+  const picked = PICKABLE.find(p => p.key === S.params.pick);
+  let v = 0;
+  const t = setInterval(() => {
+    v = Math.min(100, v + 7 + Math.random() * 9);
+    const w = $('#upBar'); if(!w){ clearInterval(t); return; }
+    w.style.width = v + '%';
+    if($('#upPct')) $('#upPct').textContent = Math.floor(v) + '%';
+    if($('#upTxt') && v > 55) $('#upTxt').textContent = '上传完成，正在解析内容…';
+    if(v >= 100){
+      clearInterval(t);
+      const c = course(S.params.course);
+      after(520, () => {
+        if(picked && !picked.ok){
+          if(picked.tooBig){
+            nav('upload', { course:c.id, pick:picked.key, stage:'error' });
+          } else {
+            /**** 解析失败：写入失败资料 ****/
+            c.materials.unshift({ id:'m' + Date.now(), name:picked.name, ext:picked.ext, size:picked.size, time:'刚刚', status:'bad', reason:picked.reason, ts:201 });
+            nav('upload', { course:c.id, pick:picked.key, stage:'failed' });
+          }
+          return;
+        }
+        /**** 解析成功：写入资料 ****/
+        c.materials.unshift({ id:'m' + Date.now(), name:picked.name, ext:picked.ext, size:picked.size, time:'刚刚', status:'ok', ts:201 });
+        nav('upload', { course:c.id, pick:picked.key, stage:'done' });
+      });
+    }
+  }, 220);
+};
+
+hooks.materials = () => {
+  // 「解析中」的资料 2 秒后转为成功，演示状态流转
+  const loading = S.courses.flatMap(c => c.materials.filter(m => m.status === 'loading'));
+  if(!loading.length) return;
+  after(2200, () => {
+    loading.forEach(m => { m.status = 'ok'; });
+    if(S.route === 'materials'){ render(); toast('《' + loading[0].name + '》解析成功，可用于生成教案'); }
+  });
+};
+
+/* ============================================================
+   5. 覆盖层：toast / 弹窗 / 动作面板
+   ============================================================ */
+function layer(html, autoCloseMs){
+  const L = $('#layers');
+  L.classList.add('on');
+  L.innerHTML = html;
+  if(autoCloseMs) after(autoCloseMs, closeLayer);
+  const mask = L.firstElementChild;
+  if(mask && mask.dataset.closable === '1'){
+    mask.addEventListener('click', e => { if(e.target === mask) closeLayer(); });
+  }
+}
+function closeLayer(){ const L = $('#layers'); L.classList.remove('on'); L.innerHTML = ''; }
+function toast(msg, kind){
+  const L = $('#layers');
+  L.classList.add('on');
+  const ic = kind === 'err' ? I.warn : I.check;
+  L.innerHTML = '<div class="toast" id="tst"><span class="tic" style="color:' + (kind === 'err' ? '#FFB4B6' : '#7BE3A6') + '">' + ic + '</span><span>' + esc(msg) + '</span></div>';
+  after(1700, () => {
+    const t = $('#tst');
+    if(t){ t.classList.add('out'); after(230, () => { if($('#tst')) closeLayer(); }); }
+  });
+}
+function confirmBox({ title, desc, ok = '确定', cancel = '取消', danger }){
+  return new Promise(res => {
+    layer('<div class="mask" data-closable="1"><div class="modal">' +
+      '<div class="mh"><h4>' + esc(title) + '</h4><p>' + desc + '</p></div>' +
+      '<div class="mf"><button data-c="0">' + esc(cancel) + '</button>' +
+      '<button class="' + (danger ? 'dgr' : 'pri') + '" data-c="1">' + esc(ok) + '</button></div></div></div>');
+    $$('#layers [data-c]').forEach(b => b.addEventListener('click', () => {
+      closeLayer(); res(b.dataset.c === '1');
+    }));
+  });
+}
+function sheet(title, groups){
+  layer('<div class="mask" data-closable="1" style="align-items:flex-end;background:rgba(15,23,42,.4)">' +
+    '<div class="sheet-wrap"><div class="sheet"><div class="sh">' + esc(title) + '</div>' +
+    groups.map(g => '<div class="grp">' + g.map(a =>
+      '<button class="' + (a.danger ? 'dgr' : '') + '" data-k="' + a.k + '">' + esc(a.label) +
+      (a.sub ? '<span class="sb">' + esc(a.sub) + '</span>' : '') + '</button>').join('') + '</div>').join('') +
+    '<button class="cancel" data-k="__cancel">取消</button></div></div></div>');
+  $$('#layers [data-k]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.k;
+    closeLayer();
+    const all = groups.flat();
+    const hit = all.find(a => a.k === k);
+    if(hit && hit.onClick) hit.onClick();
+    else if(handlers[k]) handlers[k]();
+  }));
+}
+
+/* 各弹窗的执行逻辑 */
+const handlers = {
+  cancel:() => {},
+  goCourses:() => goTab('courses'),
+  goDrafts:() => { const c = S.courses.find(x => x.plans.some(p => p.status === 'draft')) || S.courses[0]; nav('plans', { course:c.id, filter:'draft' }); },
+  help:() => layer('<div class="mask" data-closable="1"><div class="modal"><div class="mh">' +
+      '<h4>帮助与反馈</h4><p style="text-align:left">常见问题：<br>1. 支持哪些资料格式？目前仅支持 .txt 与 .md，单文件 ≤ 5MB。<br>2. 为什么提示“未参考到上传资料”？说明课程资料与该主题关联度低，可补充相关讲义后重新生成。<br>3. 定稿后还能改吗？可以，定稿后仍可再次编辑。<br><br>反馈邮箱：support@preppal.edu</p></div>' +
+      '<div class="mf"><button class="pri" data-c="1">我知道了</button></div></div></div>'),
+  about:() => layer('<div class="mask" data-closable="1"><div class="modal"><div class="mh">' +
+      '<h4>关于 PrepPal</h4><p>PrepPal 智能备课 v1.0.0<br><br>面向高校教师的 AI 备课助手：<br>基于你的课程资料生成教案草稿，并保留可追溯的引用来源。<br><br>教学资料仅用于你自己的备课，不会用于其他用途。</p></div>' +
+      '<div class="mf"><button class="pri" data-c="1">关闭</button></div></div></div>'),
+  courseInfo:() => {},
+  deleteCourse:() => {},
+  delPlanConfirm:() => {},
+  delMatConfirm:() => {},
+  source:() => {}
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('#layers [data-c]');
+  if(b){ closeLayer(); }
+});
+
+/* ============================================================
+   6. 事件绑定
+   ============================================================ */
+// 侧边导航
+$('#navlist').innerHTML = NAV.map(([r,l], i) =>
+  '<button data-route="' + r + '"><span class="n">' + (i < 9 ? '0' + (i + 1) : (i + 1)) + '</span>' + l + '</button>').join('');
+$$('#navlist button').forEach(b => b.addEventListener('click', () => {
+  const r = b.dataset.route;
+  if(r === 'login'){ S.user.logged = false; S.history = []; S.route = 'login'; S.params = {}; render(); return; }
+  if(r === 'plan-generating'){ S.form.theme = S.form.theme || '牛顿第二定律'; nav('plan-generating', { meta:{ theme:'牛顿第二定律', courseId:'phys', mats:2 } }); return; }
+  if(TAB.includes(r)) goTab(r);
+  else nav(r, r === 'plan-detail' ? { plan:'p1' } : (r === 'plans' || r === 'materials' ? { course:'phys' } : {}));
+}));
+
+// 演示开关
+$('#demoEmpty').addEventListener('change', e => { S.demo.empty = e.target.checked; render(); });
+$('#demoTimeout').addEventListener('change', e => { S.demo.timeout = e.target.checked; toast(e.target.checked ? '已开启：生成将演示超时失败' : '已关闭超时演示'); });
+$('#demoNoRefs').addEventListener('change', e => { S.demo.noRefs = e.target.checked; render(); if(S.route === 'plan-detail') toast(e.target.checked ? '已开启：教案显示“通用知识生成”提示' : '已关闭资料不足演示'); });
+$('#resetDemo').addEventListener('click', () => {
+  S = seed();
+  $('#demoEmpty').checked = false; $('#demoTimeout').checked = false; $('#demoNoRefs').checked = false;
+  S.route = 'home'; S.user.logged = true; render(); toast('演示数据已重置');
+});
+
+// 全局点击委托
+document.addEventListener('click', async e => {
+  // tab bar
+  const tab = e.target.closest('[data-tab]');
+  if(tab){ goTab(tab.dataset.tab); return; }
+
+  // 页面跳转（先处理，避免被子元素拦截）
+  const navEl = e.target.closest('[data-nav]');
+  if(navEl && !e.target.closest('[data-act]')){
+    const r = navEl.dataset.nav;
+    const p = { course:navEl.dataset.course || S.params.course, plan:navEl.dataset.plan || 'p1', filter:navEl.dataset.filter };
+    nav(r, p); return;
+  }
+  if(navEl){ /* data-act 优先 */ }
+
+  const act = e.target.closest('[data-act]');
+  if(!act) return;
+  const a = act.dataset.act;
+  const courseId = act.dataset.course || S.params.course || 'phys';
+  const p = findPlan(act.dataset.plan);
+
+  switch(a){
+    case 'back': nav(null, {}, { back:true }); break;
+    case 'legal': toast('原型演示：用户协议与隐私政策'); break;
+
+    /* 登录 */
+    case 'login': {
+      const btn = $('#loginBtn');
+      btn.innerHTML = '<span class="spinner"></span>正在登录…';
+      btn.style.opacity = '.86';
+      after(950, () => {
+        S.user.logged = true; goTab('home');
+        toast('登录成功，欢迎回来，' + S.user.name);
+      });
+      break;
+    }
+
+    /* 首页 / 课程 */
+    case 'quickGen': {
+      const c = S.courses.slice().sort((x,y) => y.ts - x.ts)[0] || null;
+      S.form.theme = S.form.theme || '牛顿第二定律';
+      S.form.audience = S.form.audience || '大学一年级理工科';
+      S.form.duration = S.form.duration || '45';
+      nav('plan-generate', { course:(c && c.id) || 'phys' });
+      break;
+    }
+    case 'createCourse': {
+      const nameEl = $('[data-form="courseName"]');
+      const name = (nameEl.value || '').trim();
+      const field = $('#fName');
+      if(name.length < 2){ field.classList.add('invalid'); nameEl.focus(); toast('请先填写课程名称', 'err'); return; }
+      field.classList.remove('invalid');
+      const id = 'c' + Date.now();
+      S.courses.unshift({
+        id, name, intro:(S.form.courseIntro || '').trim() || '暂无简介，可进入课程详情补充资料与教案。',
+        updated:'刚刚', ts:210, materials:[], plans:[]
+      });
+      S.form.courseName = ''; S.form.courseIntro = '';
+      goTab('courses');
+      after(60, () => { nav('course-detail', { course:id }); toast('课程已创建，先上传教学资料吧'); });
+      break;
+    }
+    case 'courseMore': {
+      const c = course(courseId);
+      sheet('课程操作', [[
+        { k:'rename', label:'编辑课程信息', sub:'修改课程名称与简介', onClick:() => {
+            const nm = prompt('课程名称', c.name);
+            if(nm && nm.trim()){ c.name = nm.trim(); render(); toast('课程名称已更新'); }
+          }},
+        { k:'delCourse', label:'删除课程', danger:true, sub:'课程下的资料与教案会一并删除', onClick:async () => {
+            const ok = await confirmBox({ title:'删除《' + c.name + '》？', desc:'该课程下的 <b>' + c.materials.length + ' 份资料</b> 与 <b>' + c.plans.length + ' 份教案</b> 会一并删除，且无法恢复。', ok:'删除课程', danger:true });
+            if(!ok) return;
+            S.courses = S.courses.filter(x => x.id !== c.id);
+            goTab('courses'); toast('课程已删除');
+          }}
+      ]]);
+      break;
+    }
+
+    /* 资料 */
+    case 'pick': {
+      const key = act.dataset.key;
+      const picked = PICKABLE.find(x => x.key === key);
+      nav('upload', { course:courseId, pick:key, stage:picked.tooBig ? 'error' : 'pick' });
+      break;
+    }
+    case 'pickRandom': {
+      nav('upload', { course:courseId, pick:'ok1', stage:'pick' });
+      toast('已选择：热学与热力学基础.md');
+      break;
+    }
+    case 'clearPick': nav('upload', { course:courseId }); break;
+    case 'doUpload': {
+      const key = S.params.pick || 'ok1';
+      nav('upload', { course:courseId, pick:key, stage:'uploading' });
+      break;
+    }
+    case 'delMat': {
+      const c = course(courseId);
+      const m = c.materials.find(x => x.id === act.dataset.mat);
+      const ok = await confirmBox({ title:'删除这份资料？', desc:'《' + esc(m.name) + '》删除后，已生成教案中的引用来源标注不会自动更新。', ok:'删除', danger:true });
+      if(!ok) return;
+      c.materials = c.materials.filter(x => x.id !== m.id);
+      render(); toast('资料已删除');
+      break;
+    }
+    case 'why': {
+      const c = course(courseId);
+      const m = c.materials.find(x => x.id === act.dataset.mat);
+      layer('<div class="mask" data-closable="1"><div class="modal"><div class="mh"><h4>解析失败原因</h4>' +
+        '<p style="text-align:left">《' + esc(m.name) + '》<br><br>' + esc(m.reason || '文件内容无法读取，请检查编码后重试。') + '</p></div>' +
+        '<div class="mf"><button data-c="2">取消</button><button class="pri" data-c="1">重新上传</button></div></div></div>');
+      $$('#layers [data-c]').forEach(b => b.addEventListener('click', () => {
+        const v = b.dataset.c; closeLayer();
+        if(v === '1') nav('upload', { course:courseId, pick:'ok2', stage:'pick' });
+      }));
+      break;
+    }
+    case 'reupload': nav('upload', { course:courseId, pick:'ok2', stage:'pick' }); break;
+
+    /* 生成教案 */
+    case 'pickCourse': {
+      sheet('切换所属课程', [S.courses.map(c => ({
+        k:'pick_' + c.id, label:c.name, sub:c.materials.length + ' 份资料 · ' + c.plans.length + ' 份教案',
+        onClick:() => { S.params = Object.assign({}, S.params, { course:c.id }); render(); toast('已切换到《' + c.name + '》'); }
+      }))]);
+      break;
+    }
+    case 'setType': S.form.type = act.dataset.val; render(); break;
+    case 'gen': {
+      const theme = ($('[data-form="theme"]') || {}).value || '';
+      const aud = ($('[data-form="audience"]') || {}).value || '';
+      const dur = ($('[data-form="duration"]') || {}).value || '';
+      const goal = ($('[data-form="goal"]') || {}).value || '';
+      S.form.theme = theme.trim(); S.form.audience = aud.trim(); S.form.duration = String(dur).trim(); S.form.goal = goal;
+      let bad = null;
+      if(!S.form.theme){ $('#fTheme').classList.add('invalid'); bad = bad || $('#fTheme'); }
+      if(!S.form.audience){ $('#fAud').classList.add('invalid'); bad = bad || $('#fAud'); }
+      const n = Number(S.form.duration);
+      if(!/^\d+$/.test(S.form.duration) || n < 10 || n > 180){ $('#fDur').classList.add('invalid'); bad = bad || $('#fDur'); }
+      if(bad){ bad.scrollIntoView({ block:'center', behavior:'smooth' }); toast('还有必填信息未填完', 'err'); return; }
+      const c = course(courseId);
+      const okMats = c.materials.filter(m => m.status === 'ok');
+      nav('plan-generating', { meta:{
+        theme:S.form.theme, courseId:c.id, duration:n, audience:S.form.audience, type:S.form.type,
+        customGoal:S.form.goal, mats:okMats.length,
+        refs:okMats.length ? okMats.slice(0,2).map(m => m.name).join('、') : '（未检索到可用资料）'
+      }});
+      break;
+    }
+    case 'retryGen': {
+      const meta = S.params.meta || {};
+      nav('plan-generating', { meta });
+      break;
+    }
+
+    /* 教案详情 */
+    case 'toggle': {
+      const id = act.dataset.id;
+      S.ui.collapsed[id] = !S.ui.collapsed[id];
+      act.closest('.collapse').classList.toggle('open', !S.ui.collapsed[id]);
+      break;
+    }
+    case 'saveDraft': {
+      const cur = livePlan(act.dataset.plan);
+      if(cur){ cur.updated = '刚刚'; cur.ts = 205; }
+      render(); toast('草稿已保存');
+      break;
+    }
+    case 'editFinal': {
+      const cur = livePlan(act.dataset.plan);
+      if(cur){ cur.status = 'draft'; cur.updated = '刚刚'; cur.ts = 206; }
+      render(); toast('已回到可编辑状态，保存后可再次定稿');
+      break;
+    }
+    case 'finalize': {
+      const cur = livePlan(act.dataset.plan);
+      const ok = await confirmBox({ title:'标记为定稿？', desc:'定稿后仍可再次编辑，确定标记为定稿吗？', ok:'标记为定稿' });
+      if(!ok || !cur) return;
+      cur.status = 'final'; cur.updated = '刚刚'; cur.ts = 207;
+      render(); toast('已标记为定稿');
+      break;
+    }
+    case 'planMore': {
+      const cur = findPlan(act.dataset.plan);
+      sheet('教案操作', [[
+        { k:'goCourse', label:'查看所属课程', sub:course(cur.courseId).name, onClick:() => nav('course-detail', { course:cur.courseId }) },
+        { k:'goPlans', label:'查看该课程全部教案', onClick:() => nav('plans', { course:cur.courseId }) },
+        { k:'del', label:'删除教案', danger:true, onClick:async () => {
+            const ok = await confirmBox({ title:'删除这份教案？', desc:'《' + esc(cur.title) + '》删除后无法恢复。', ok:'删除', danger:true });
+            if(!ok) return;
+            const c = course(cur.courseId);
+            c.plans = c.plans.filter(x => x.id !== cur.id);
+            nav('plans', { course:c.id }); toast('教案已删除');
+          }}
+      ]]);
+      break;
+    }
+
+    /* 教案列表 */
+    case 'filter': nav('plans', { course:courseId, filter:act.dataset.val }); break;
+    case 'delPlan': {
+      const cur = findPlan(act.dataset.plan);
+      const ok = await confirmBox({ title:'删除这份教案？', desc:'《' + esc(cur.title) + '》删除后无法恢复。', ok:'删除', danger:true });
+      if(!ok) return;
+      const c = course(cur.courseId);
+      c.plans = c.plans.filter(x => x.id !== cur.id);
+      render(); toast('教案已删除');
+      break;
+    }
+    /* 我的 */
+    case 'courses': goTab('courses'); break;
+    case 'plans': {
+      const c = S.courses.find(x => x.plans.some(pp => pp.status === 'draft')) || S.courses[0];
+      nav('plans', { course:c.id, filter:'draft' });
+      break;
+    }
+    case 'help': handlers.help(); break;
+    case 'about': handlers.about(); break;
+    case 'logout': {
+      const ok = await confirmBox({ title:'退出登录？', desc:'退出后需要重新使用微信一键登录。', ok:'退出登录', danger:true });
+      if(!ok) return;
+      S.user.logged = false; S.history = []; S.route = 'login'; S.params = {}; render();
+      break;
+    }
+  }
+});
+
+// 表单输入持久化
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-form]');
+  if(el) S.form[el.dataset.form] = el.value;
+  // 清除校验错误
+  const wrap = e.target.closest('.field');
+  if(wrap && wrap.classList.contains('invalid')) wrap.classList.remove('invalid');
+});
+
+// 可编辑内容保存
+document.addEventListener('focusout', e => {
+  const el = e.target.closest('.editable[data-plan]');
+  if(!el) return;
+  const id = el.dataset.plan;
+  const body = S.planBody[id];
+  if(!body) return;
+  const txt = el.innerText.replace(/\u00a0/g, ' ').trim();
+  if(el.dataset.proc != null){
+    const i = Number(el.dataset.proc);
+    const f = el.dataset.field;
+    if(f === 'min'){
+      const n = parseInt(txt, 10);
+      body.process[i].min = isNaN(n) ? body.process[i].min : n;
+      el.innerText = body.process[i].min + ' 分钟';
+      return;
+    }
+    body.process[i][f] = txt;
+    return;
+  }
+  const path = el.dataset.field.split('.');
+  if(path.length === 2){ body[path[0]][path[1]] = txt; }
+  else { body[path[0]] = txt; }
+});
+// 回车不换行（单行区块）
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.closest('.editable[data-field]:not([data-field="text"])') &&
+     !e.target.closest('.editable[data-field="board"], .editable[data-field="homework"]')){
+    e.preventDefault(); e.target.blur();
+  }
+});
+
+/* 启动 */
+S.user.logged = false;
+render();
+</script>
+</body>
+</html>

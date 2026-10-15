@@ -1,0 +1,127 @@
+<view class="pp-page pp-page--tab">
+  <view class="pp-card profile">
+    <view class="pp-avatar pp-avatar--lg">{{avatarText}}</view>
+    <view class="profile__body">
+      <view class="profile__name">{{user.realName || user.nickname || '老师'}}</view>
+      <view class="profile__meta">
+        <view>{{user.org || '未设置院校信息'}}</view>
+        <view>PrepPal 个人备课空间 · 仅本人可见</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="pp-stat-row">
+    <view class="pp-stat">
+      <view class="pp-stat__n">{{stats.courses}}<text class="pp-stat__unit">门</text></view>
+      <view class="pp-stat__label">我的课程</view>
+    </view>
+    <view class="pp-stat">
+      <view class="pp-stat__n">{{stats.drafts}}<text class="pp-stat__unit">份</text></view>
+      <view class="pp-stat__label">草稿</view>
+    </view>
+    <view class="pp-stat">
+      <view class="pp-stat__n">{{stats.finals}}<text class="pp-stat__unit">份</text></view>
+      <view class="pp-stat__label">已定稿</view>
+    </view>
+  </view>
+
+  <view class="pp-sec">
+    <view class="pp-card">
+      <view
+        class="pp-li pp-li--tap"
+        wx:for="{{menus}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onMenuTap"
+      >
+        <view class="menu__ic">
+          <pp-icon name="{{item.icon}}" size="32rpx" color="#2b4acb" />
+        </view>
+        <view class="pp-li__grow">
+          <view class="menu__title">{{item.title}}</view>
+          <view class="menu__desc">{{item.desc}}</view>
+        </view>
+        <view class="pp-chev">
+          <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="pp-sec">
+    <view class="pp-card">
+      <view class="pp-li pp-li--tap logout" bindtap="onLogout">退出登录</view>
+    </view>
+  </view>
+
+  <!-- 开发者调试面板（config.DEBUG_PANEL 控制显隐） -->
+  <view class="pp-sec" wx:if="{{debugPanel}}">
+    <view class="pp-sec__head">
+      <view class="pp-sec__title">开发者调试</view>
+      <pp-status-chip type="neutral">仅演示用</pp-status-chip>
+    </view>
+    <view class="pp-card">
+      <view class="pp-li">
+        <view class="pp-li__grow">
+          <view class="menu__title">{{debugLabels.empty}}</view>
+          <view class="menu__desc">隐藏全部课程，演示新用户引导</view>
+        </view>
+        <van-switch
+          checked="{{debug.empty}}"
+          active-color="#2b4acb"
+          data-key="empty"
+          bind:change="onToggleDebug"
+        />
+      </view>
+      <view class="pp-li">
+        <view class="pp-li__grow">
+          <view class="menu__title">{{debugLabels.timeout}}</view>
+          <view class="menu__desc">生成教案时演示超时失败分支</view>
+        </view>
+        <van-switch
+          checked="{{debug.timeout}}"
+          active-color="#2b4acb"
+          data-key="timeout"
+          bind:change="onToggleDebug"
+        />
+      </view>
+      <view class="pp-li">
+        <view class="pp-li__grow">
+          <view class="menu__title">{{debugLabels.noRefs}}</view>
+          <view class="menu__desc">生成结果展示“基于通用知识生成”提示</view>
+        </view>
+        <van-switch
+          checked="{{debug.noRefs}}"
+          active-color="#2b4acb"
+          data-key="noRefs"
+          bind:change="onToggleDebug"
+        />
+      </view>
+      <view class="pp-li">
+        <view class="pp-li__grow">
+          <view class="menu__title">后端连通性检测</view>
+          <view class="menu__desc">请求 GET /api/hello，验证后端是否已启动</view>
+        </view>
+        <view class="pp-btn pp-btn--soft pp-btn--sm" hover-class="pp-btn--hover" bindtap="onCheckBackend">
+          <view wx:if="{{checking}}" class="pp-spinner pp-spinner--brand"></view>
+          <text>{{checking ? '检测中' : '检测'}}</text>
+        </view>
+      </view>
+      <!-- 重置演示数据仅 mock 模式有意义（真实模式没有后端 reset 接口） -->
+      <view class="pp-li" wx:if="{{isMock}}">
+        <view class="pp-li__grow">
+          <view class="menu__title">重置演示数据</view>
+          <view class="menu__desc">恢复初始示例课程与教案</view>
+        </view>
+        <view class="pp-btn pp-btn--ghost pp-btn--sm" hover-class="pp-btn--hover" bindtap="onResetDemo">
+          <text>重置</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="me__foot">
+    <view>PrepPal 不会获取你的通讯录、聊天记录</view>
+    <view>所有教学资料仅用于你自己的备课</view>
+  </view>
+</view>

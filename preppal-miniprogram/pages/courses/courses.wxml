@@ -1,0 +1,45 @@
+<view class="pp-page pp-page--tab">
+  <view class="courses__head">
+    <view class="pp-title">我的课程</view>
+    <view class="pp-btn pp-btn--soft pp-btn--sm" hover-class="pp-btn--hover" bindtap="onNewCourse">
+      <pp-icon name="plus" size="28rpx" color="#2b4acb" />
+      <text>新建课程</text>
+    </view>
+  </view>
+
+  <view class="pp-card" wx:if="{{!courses.length}}">
+    <pp-empty-state
+      icon="empty-course"
+      title="还没有课程"
+      desc="课程是你备课的容器：资料、教案都会归到同一门课程下。"
+      actionText="创建第一门课程"
+      bind:action="onNewCourse"
+    />
+  </view>
+
+  <block wx:else>
+    <view
+      class="pp-card course"
+      wx:for="{{courses}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onCourseTap"
+    >
+      <view class="pp-file-badge pp-file-badge--big pp-file-badge--plain">
+        <pp-icon name="book" size="40rpx" color="#2b4acb" />
+      </view>
+      <view class="pp-li__grow">
+        <view class="course__name">{{item.name}}</view>
+        <view class="course__desc">{{item.description || '暂无简介，可进入课程详情补充资料与教案。'}}</view>
+        <view class="pp-pill-row">
+          <view class="pp-pill">{{item.materialCount}} 份资料</view>
+          <view class="pp-pill">{{item.planCount}} 份教案</view>
+          <view class="pp-pill">更新于 {{item.updatedText}}</view>
+        </view>
+      </view>
+      <view class="pp-chev">
+        <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+      </view>
+    </view>
+  </block>
+</view>

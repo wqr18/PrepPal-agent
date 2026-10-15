@@ -1,0 +1,4 @@
+<view class="chip chip--{{type}}">
+  <view wx:if="{{dot}}" class="chip__dot"></view>
+  <slot></slot>
+</view>

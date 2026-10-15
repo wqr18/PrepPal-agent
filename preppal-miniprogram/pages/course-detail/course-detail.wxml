@@ -1,0 +1,156 @@
+<view class="pp-page" wx:if="{{course}}">
+  <view class="pp-hero detail__hero">
+    <view class="pp-hero__more" bindtap="onMore">
+      <pp-icon name="dots" size="34rpx" color="#ffffff" />
+    </view>
+    <view class="pp-hero__title">{{course.name}}</view>
+    <view class="pp-hero__desc">{{course.description || '暂无简介，可通过「更多 → 编辑课程信息」补充。'}}</view>
+  </view>
+
+  <view class="detail__cards">
+    <view class="pp-mini-card" hover-class="pp-btn--hover" bindtap="onGoMaterials">
+      <view class="pp-mini-card__head">
+        <pp-icon name="layer" size="30rpx" color="#2b4acb" />
+        <text>教学资料</text>
+      </view>
+      <view class="pp-mini-card__value">{{course.materialCount}}<text class="pp-stat__unit">份</text></view>
+    </view>
+    <view class="pp-mini-card" hover-class="pp-btn--hover" bindtap="onGoPlans">
+      <view class="pp-mini-card__head">
+        <pp-icon name="plan" size="30rpx" color="#2b4acb" />
+        <text>教案</text>
+      </view>
+      <view class="pp-mini-card__value">{{course.planCount}}<text class="pp-stat__unit">份</text></view>
+    </view>
+  </view>
+
+  <view class="detail__actions">
+    <view class="pp-btn pp-btn--ghost" hover-class="pp-btn--hover" bindtap="onUpload">
+      <pp-icon name="upload" size="32rpx" color="#0f172a" />
+      <text>上传资料</text>
+    </view>
+    <view class="pp-btn pp-btn--primary" hover-class="pp-btn--hover" bindtap="onGenerate">
+      <pp-icon name="spark" size="32rpx" color="#ffffff" />
+      <text>生成教案</text>
+    </view>
+  </view>
+
+  <!-- 教学资料 -->
+  <view class="pp-sec">
+    <view class="pp-sec__head">
+      <view class="pp-sec__title">教学资料</view>
+      <view class="pp-sec__action" bindtap="onGoMaterials">查看全部</view>
+    </view>
+
+    <block wx:if="{{materials.length}}">
+      <view class="pp-card">
+        <view
+          class="pp-li pp-li--tap"
+          wx:for="{{materials}}"
+          wx:key="id"
+          bindtap="onGoMaterials"
+        >
+          <view class="pp-file-badge pp-file-badge--{{item.ext === 'MD' ? 'md' : 'txt'}}">{{item.ext}}</view>
+          <view class="pp-li__grow">
+            <view class="pp-li__title">{{item.filename}}</view>
+            <view class="pp-li__meta">
+              <text>{{item.fileSizeText}}</text>
+              <text>·</text>
+              <text>{{item.createdText}}</text>
+            </view>
+          </view>
+          <pp-status-chip type="{{item.isOk ? 'ok' : (item.isPending ? 'load' : 'err')}}">{{item.statusText}}</pp-status-chip>
+        </view>
+      </view>
+
+      <view class="pp-notice {{okCount ? 'pp-notice--ok' : 'pp-notice--warn'}} detail__hint">
+        <view class="pp-notice__ic">
+          <pp-icon name="{{okCount ? 'check' : 'warn'}}" size="32rpx" color="{{okCount ? '#12a150' : '#c08a22'}}" />
+        </view>
+        <view class="pp-notice__text">
+          {{okCount ? '已有 ' + okCount + ' 份资料可用于引用，生成教案时会优先参考。' : '暂时没有可用的资料。上传 txt 或 md 教学资料后，生成的教案会带上可追溯的来源说明。'}}
+        </view>
+      </view>
+    </block>
+
+    <view class="pp-card" wx:else>
+      <pp-empty-state
+        icon="empty-doc"
+        title="还没有教学资料"
+        desc="目前仅支持 .txt、.md 文件，单个文件不超过 5MB。"
+        actionText="上传第一份资料"
+        bind:action="onUpload"
+      />
+    </view>
+  </view>
+
+  <!-- 课程教案 -->
+  <view class="pp-sec">
+    <view class="pp-sec__head">
+      <view class="pp-sec__title">课程教案</view>
+      <view class="pp-sec__action" bindtap="onGoPlans">查看全部</view>
+    </view>
+
+    <view class="pp-card" wx:if="{{plans.length}}">
+      <view
+        class="pp-li pp-li--tap"
+        wx:for="{{plans}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onPlanTap"
+      >
+        <view class="pp-li__grow">
+          <view class="pp-li__title">
+            {{item.title}}
+            <pp-status-chip type="{{item.isDraft ? 'draft' : 'final'}}" dot />
+          </view>
+          <view class="pp-li__meta">
+            <text>{{item.topic}}</text>
+            <text>·</text>
+            <text>{{item.classDuration}} 分钟</text>
+            <text>·</text>
+            <text>{{item.updatedText}}</text>
+          </view>
+        </view>
+        <view class="pp-chev">
+          <pp-icon name="chev" size="26rpx" color="#b9c2d0" />
+        </view>
+      </view>
+    </view>
+
+    <view class="pp-card" wx:else>
+      <pp-empty-state
+        icon="empty-plan"
+        title="这门课程还没有教案"
+        desc="生成第一份教案，课后可随时修改或标记定稿。"
+        actionText="生成该课程第一份教案"
+        bind:action="onGenerate"
+      />
+    </view>
+  </view>
+</view>
+
+<van-action-sheet
+  show="{{sheetShow}}"
+  actions="{{sheetActions}}"
+  title="课程操作"
+  cancel-text="取消"
+  round
+  z-index="2100"
+  bind:select="onSheetSelect"
+  bind:close="onSheetClose"
+  bind:cancel="onSheetClose"
+/>
+
+<van-dialog
+  show="{{dialogShow}}"
+  title="{{dialogTitle}}"
+  message="{{dialogMessage}}"
+  show-cancel-button
+  confirm-button-text="{{dialogOkText}}"
+  confirm-button-color="{{dialogDanger ? '#e5484d' : '#2b4acb'}}"
+  custom-style="width: 552rpx"
+  z-index="2200"
+  bind:confirm="onDialogConfirm"
+  bind:cancel="onDialogCancel"
+/>

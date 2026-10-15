@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "上传资料",
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index",
+    "pp-status-chip": "/components/pp-status-chip/index"
+  }
+}

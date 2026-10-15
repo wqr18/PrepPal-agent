@@ -1,0 +1,81 @@
+<view class="pp-page pp-page--with-bar">
+  <view class="plans__head">
+    <view class="pp-title">课程教案</view>
+    <view class="pp-sub" style="margin: 8rpx 0 0">所属课程：{{courseName || '—'}}</view>
+  </view>
+
+  <block wx:if="{{!counts.ALL}}">
+    <view class="pp-card">
+      <pp-empty-state
+        icon="empty-plan"
+        title="还没有教案"
+        desc="去生成第一份教案，PrepPal 会结合这门课程的资料写出带来源的草稿。"
+        actionText="去生成第一份教案"
+        bind:action="onGenerate"
+      />
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="pp-seg plans__seg">
+      <view
+        wx:for="{{filterItems}}"
+        wx:key="key"
+        class="pp-seg__item {{filter === item.key ? 'pp-seg__item--on' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onFilterTap"
+      >
+        {{item.label}} {{item.count}}
+      </view>
+    </view>
+
+    <view class="pp-card" wx:if="{{plans.length}}">
+      <view
+        class="pp-li pp-li--top"
+        wx:for="{{plans}}"
+        wx:key="id"
+      >
+        <view class="pp-li__grow" data-id="{{item.id}}" bindtap="onPlanTap">
+          <view class="pp-li__title">
+            {{item.title}}
+            <pp-status-chip type="{{item.isDraft ? 'draft' : 'final'}}" dot />
+          </view>
+          <view class="pp-li__meta">
+            <text>{{item.topic}}</text>
+            <text>·</text>
+            <text>{{item.targetAudience}}</text>
+            <text>·</text>
+            <text>{{item.classDuration}} 分钟</text>
+          </view>
+          <view class="plans__foot">
+            <text class="plans__time">{{item.updatedText}}</text>
+            <pp-status-chip type="{{item.hasRefs ? 'ok' : 'draft'}}">
+              {{item.hasRefs ? '引用 ' + item.refs.length + ' 处资料' : '未引用资料'}}
+            </pp-status-chip>
+          </view>
+        </view>
+
+        <view class="pp-btn pp-btn--icon" hover-class="pp-btn--hover" data-id="{{item.id}}" bindtap="onDelete">
+          <pp-icon name="trash" size="32rpx" color="#8a94a6" />
+        </view>
+      </view>
+    </view>
+
+    <view class="pp-card" wx:else>
+      <view class="pp-empty">
+        <view class="pp-empty__art">
+          <pp-icon name="empty-plan" size="64rpx" color="#2b4acb" />
+        </view>
+        <view class="pp-empty__title">没有{{filter === 'DRAFT' ? '草稿' : '已定稿'}}教案</view>
+        <view class="pp-empty__desc">切换筛选条件，或去生成一份新的教案草稿。</view>
+      </view>
+    </view>
+  </block>
+
+  <view class="pp-bottom-bar">
+    <view class="pp-btn pp-btn--primary pp-btn--block" hover-class="pp-btn--hover" bindtap="onGenerate">
+      <pp-icon name="spark" size="32rpx" color="#ffffff" />
+      <text>生成新教案</text>
+    </view>
+  </view>
+</view>

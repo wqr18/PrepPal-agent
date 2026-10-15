@@ -1,0 +1,60 @@
+.steps-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin: 20rpx 4rpx 32rpx;
+}
+
+.steps-row__item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.steps-row__label {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  font-weight: 500;
+}
+
+.steps-row__label--on {
+  color: var(--pp-brand);
+  font-weight: 700;
+}
+
+.steps-row__line {
+  flex: 1;
+  height: 1rpx;
+  background: var(--pp-line);
+}
+
+.gen__card {
+  padding: 32rpx;
+}
+
+.gen__picker-action {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: var(--pp-ink-3);
+}
+
+.gen__duration {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.gen__duration .pp-input {
+  flex: 1;
+}
+
+.gen__hint {
+  margin-top: 28rpx;
+}
+
+.gen__ph {
+  color: #a9b2c0;
+}

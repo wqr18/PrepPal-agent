@@ -1,0 +1,11 @@
+.edit__card {
+  padding: 32rpx;
+}
+
+.edit__hint {
+  margin-top: 28rpx;
+}
+
+.edit__ph {
+  color: #a9b2c0;
+}

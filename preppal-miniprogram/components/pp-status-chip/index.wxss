@@ -1,0 +1,45 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 21rpx;
+  font-weight: 600;
+  border-radius: 14rpx;
+  padding: 6rpx 14rpx;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.chip__dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip--draft {
+  background: #fff4e5;
+  color: var(--pp-warn, #b7791f);
+}
+
+.chip--final,
+.chip--ok {
+  background: var(--pp-ok-bg, #e9f8ef);
+  color: var(--pp-ok, #12a150);
+}
+
+.chip--load,
+.chip--soft {
+  background: var(--pp-brand-50, #eef2ff);
+  color: var(--pp-brand, #2b4acb);
+}
+
+.chip--err {
+  background: var(--pp-danger-bg, #feecec);
+  color: var(--pp-danger, #e5484d);
+}
+
+.chip--neutral {
+  background: var(--pp-neutral-bg, #f1f4fa);
+  color: var(--pp-ink-2, #475467);
+}

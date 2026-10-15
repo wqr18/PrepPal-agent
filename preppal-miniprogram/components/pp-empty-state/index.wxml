@@ -1,0 +1,10 @@
+<view class="empty">
+  <view class="empty__art">
+    <pp-icon name="{{icon}}" size="64rpx" color="#2b4acb" />
+  </view>
+  <view class="empty__title">{{title}}</view>
+  <view class="empty__desc" wx:if="{{desc}}">{{desc}}</view>
+  <view class="empty__action" wx:if="{{actionText}}">
+    <view class="empty__btn" hover-class="empty__btn--hover" bindtap="onAction">{{actionText}}</view>
+  </view>
+</view>

@@ -1,0 +1,97 @@
+.dropzone {
+  border: 2rpx dashed #c6d2e8;
+  border-radius: 32rpx;
+  background: #fbfcff;
+  padding: 52rpx 36rpx;
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+.dropzone--hover {
+  border-color: var(--pp-brand);
+  background: var(--pp-brand-50);
+}
+
+.dropzone__ico {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  border: 1rpx solid var(--pp-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24rpx;
+}
+
+.dropzone__title {
+  font-size: 29rpx;
+  font-weight: 600;
+}
+
+.dropzone__desc {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  margin-top: 12rpx;
+}
+
+.upload__file {
+  padding: 28rpx;
+  margin-top: 28rpx;
+}
+
+.upload__file-top {
+  display: flex;
+  gap: 24rpx;
+  align-items: center;
+}
+
+.upload__file-name {
+  font-size: 28rpx;
+  font-weight: 650;
+  letter-spacing: -0.2rpx;
+  word-break: break-all;
+}
+
+.upload__notice {
+  margin-top: 24rpx;
+}
+
+.upload__strong {
+  font-weight: 700;
+}
+
+.upload__progress {
+  margin-top: 28rpx;
+}
+
+.upload__progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  margin-bottom: 14rpx;
+}
+
+.upload__progress-hint {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  margin-top: 16rpx;
+}
+
+.upload__samples {
+  margin-top: 28rpx;
+  overflow: hidden;
+}
+
+.upload__samples-head {
+  font-size: 23rpx;
+  color: var(--pp-ink-3);
+  font-weight: 600;
+  padding: 24rpx 28rpx 8rpx;
+}
+
+.upload__sample-name {
+  font-size: 27rpx;
+  font-weight: 600;
+}

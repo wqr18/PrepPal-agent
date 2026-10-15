@@ -1,0 +1,78 @@
+<view class="pp-page pp-page--with-bar">
+  <view class="materials__head">
+    <view>
+      <view class="pp-title">教学资料</view>
+      <view class="pp-sub" style="margin: 8rpx 0 0">所属课程：{{courseName || '—'}}</view>
+    </view>
+    <view class="pp-btn pp-btn--soft pp-btn--sm" hover-class="pp-btn--hover" bindtap="onUpload">
+      <pp-icon name="upload" size="28rpx" color="#2b4acb" />
+      <text>上传资料</text>
+    </view>
+  </view>
+
+  <view class="pp-card" wx:if="{{!materials.length}}">
+    <pp-empty-state
+      icon="empty-doc"
+      title="还没有教学资料"
+      desc="目前仅支持 .txt、.md 文件，单个文件不超过 5MB。上传后教案会引用这些资料的具体段落。"
+      actionText="上传资料"
+      bind:action="onUpload"
+    />
+  </view>
+
+  <block wx:else>
+    <view class="pp-notice pp-notice--info materials__hint">
+      <view class="pp-notice__ic">
+        <pp-icon name="info" size="32rpx" color="#2b4acb" />
+      </view>
+      <view class="pp-notice__text">资料会按段落切分为引用单元。生成教案时，AI 会在参考资料中标出用到的文件与段落。</view>
+    </view>
+
+    <view class="pp-card">
+      <view
+        class="pp-li pp-li--top"
+        wx:for="{{materials}}"
+        wx:key="id"
+      >
+        <view class="pp-file-badge pp-file-badge--{{item.ext === 'MD' ? 'md' : 'txt'}}">{{item.ext}}</view>
+        <view class="pp-li__grow">
+          <view class="pp-li__title">{{item.filename}}</view>
+          <view class="pp-li__meta">
+            <text>{{item.ext}}</text>
+            <text>·</text>
+            <text>{{item.fileSizeText}}</text>
+            <text>·</text>
+            <text>{{item.createdText}}</text>
+          </view>
+
+          <view class="materials__status">
+            <pp-status-chip type="{{item.isOk ? 'ok' : (item.isPending ? 'load' : 'err')}}">{{item.statusText}}</pp-status-chip>
+          </view>
+
+          <view class="materials__ops" wx:if="{{item.isFailed}}">
+            <view class="pp-btn pp-btn--ghost pp-btn--sm" hover-class="pp-btn--hover" data-id="{{item.id}}" bindtap="onWhy">
+              <text>查看原因</text>
+            </view>
+            <view class="pp-btn pp-btn--soft pp-btn--sm" hover-class="pp-btn--hover" bindtap="onUpload">
+              <text>重新上传</text>
+            </view>
+          </view>
+
+          <view class="materials__pending" wx:if="{{item.isPending}}">正在解析内容，完成后即可用于生成教案…</view>
+        </view>
+
+        <view class="pp-btn pp-btn--icon" hover-class="pp-btn--hover" data-id="{{item.id}}" bindtap="onDelete">
+          <pp-icon name="trash" size="32rpx" color="#8a94a6" />
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="pp-bottom-bar">
+    <view class="pp-btn pp-btn--primary pp-btn--block" hover-class="pp-btn--hover" bindtap="onUpload">
+      <pp-icon name="upload" size="32rpx" color="#ffffff" />
+      <text>上传资料</text>
+    </view>
+    <view class="pp-bar-hint">仅支持 TXT、MD，单个文件 ≤ 5MB</view>
+  </view>
+</view>

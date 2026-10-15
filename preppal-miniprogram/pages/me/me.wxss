@@ -1,0 +1,63 @@
+.profile {
+  display: flex;
+  gap: 26rpx;
+  align-items: center;
+  padding: 34rpx;
+  margin-top: 12rpx;
+}
+
+.profile__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile__name {
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: -0.3rpx;
+}
+
+.profile__meta {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  line-height: 1.6;
+  margin-top: 10rpx;
+}
+
+.menu__ic {
+  width: 64rpx;
+  height: 64rpx;
+  flex: 0 0 64rpx;
+  border-radius: 20rpx;
+  background: var(--pp-brand-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: -0.1rpx;
+}
+
+.menu__desc {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+  margin-top: 6rpx;
+}
+
+.logout {
+  justify-content: center;
+  color: var(--pp-danger);
+  font-weight: 600;
+  font-size: 28rpx;
+}
+
+.me__foot {
+  margin-top: 32rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: var(--pp-ink-3);
+  line-height: 1.7;
+}

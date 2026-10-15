@@ -1,0 +1,27 @@
+.detail__hero {
+  margin-top: 12rpx;
+}
+
+.detail__cards {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 28rpx;
+}
+
+.detail__actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 28rpx;
+}
+
+.detail__actions .pp-btn {
+  flex: 1;
+}
+
+.detail__actions .pp-btn--primary {
+  flex: 1.25;
+}
+
+.detail__hint {
+  margin-top: 20rpx;
+}

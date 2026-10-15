@@ -1,0 +1,43 @@
+<view class="login" style="padding-top: {{statusBarHeight}}px">
+  <view class="login__hero">
+    <view class="login__logo">
+      <pp-icon name="book" size="80rpx" color="#ffffff" />
+    </view>
+    <view class="login__title">PrepPal 智能备课</view>
+    <view class="login__tagline">让备课从小时级缩短到分钟级</view>
+
+    <view class="login__points">
+      <view class="login__point" wx:for="{{points}}" wx:key="title">
+        <view class="login__point-ic">
+          <pp-icon name="check" size="24rpx" color="#2b4acb" />
+        </view>
+        <view class="login__point-body">
+          <view class="login__point-title">{{item.title}}</view>
+          <view class="login__point-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="login__actions">
+    <view
+      class="pp-btn pp-btn--primary pp-btn--block {{loading ? 'pp-btn--disabled' : ''}}"
+      hover-class="{{loading ? '' : 'pp-btn--hover'}}"
+      bindtap="onLogin"
+    >
+      <view wx:if="{{loading}}" class="pp-spinner"></view>
+      <pp-icon wx:else name="wechat" size="34rpx" color="#ffffff" />
+      <text>{{loading ? '正在登录…' : '微信一键登录'}}</text>
+    </view>
+
+    <view class="login__legal">
+      <view>仅用于创建你的个人备课空间，不会获取你的通讯录与聊天内容。</view>
+      <view class="login__legal-line">
+        登录即表示同意
+        <text class="login__link" data-type="用户协议" bindtap="onAgreement">用户协议</text>
+        与
+        <text class="login__link" data-type="隐私政策" bindtap="onAgreement">隐私政策</text>
+      </view>
+    </view>
+  </view>
+</view>

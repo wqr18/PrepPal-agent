@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "生成教案",
+  "usingComponents": {
+    "pp-icon": "/components/pp-icon/index",
+    "pp-status-chip": "/components/pp-status-chip/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
+  }
+}

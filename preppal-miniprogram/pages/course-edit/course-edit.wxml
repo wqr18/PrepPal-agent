@@ -1,0 +1,59 @@
+<view class="pp-page pp-page--with-bar">
+  <view class="pp-title">{{isEdit ? '编辑课程信息' : '新建课程'}}</view>
+  <view class="pp-sub">
+    {{isEdit ? '课程名称会显示在教案封面与来源说明中。' : '课程名称会显示在教案封面与来源说明中，建议使用教务系统里的规范名称。'}}
+  </view>
+
+  <view class="pp-body">
+    <view class="pp-card edit__card">
+      <view class="pp-field {{errors.name ? 'pp-field--invalid' : ''}}">
+        <view class="pp-field__label">课程名称 <text class="pp-field__req">*</text></view>
+        <input
+          class="pp-input"
+          value="{{form.name}}"
+          placeholder="例如：大学物理"
+          placeholder-class="edit__ph"
+          maxlength="{{nameMax}}"
+          data-field="name"
+          bindinput="onInput"
+        />
+        <view class="pp-field__err" wx:if="{{errors.name}}">{{errors.name}}</view>
+      </view>
+
+      <view class="pp-field {{errors.description ? 'pp-field--invalid' : ''}}" style="margin-bottom: 0">
+        <view class="pp-field__label">课程简介 <text class="pp-field__opt">选填</text></view>
+        <textarea
+          class="pp-textarea"
+          value="{{form.description}}"
+          placeholder="一句话说明授课对象与课程重点，例如：面向理工科一年级，讲授力学与电磁学基础。"
+          placeholder-class="edit__ph"
+          maxlength="{{introMax}}"
+          auto-height
+          data-field="description"
+          bindinput="onInput"
+        />
+        <view class="pp-field__err" wx:if="{{errors.description}}">{{errors.description}}</view>
+      </view>
+    </view>
+
+    <view class="pp-notice pp-notice--info edit__hint">
+      <view class="pp-notice__ic">
+        <pp-icon name="info" size="32rpx" color="#2b4acb" />
+      </view>
+      <view class="pp-notice__text">
+        {{isEdit ? '修改后，该课程下已有教案中的课程名会同步更新。' : '创建后可以在这门课程下上传教学资料并生成教案。资料越具体，教案的引用越可信。'}}
+      </view>
+    </view>
+  </view>
+
+  <view class="pp-bottom-bar">
+    <view
+      class="pp-btn pp-btn--primary pp-btn--block {{submitting ? 'pp-btn--disabled' : ''}}"
+      hover-class="{{submitting ? '' : 'pp-btn--hover'}}"
+      bindtap="onSubmit"
+    >
+      <view wx:if="{{submitting}}" class="pp-spinner"></view>
+      <text>{{isEdit ? '保存修改' : '创建课程'}}</text>
+    </view>
+  </view>
+</view>

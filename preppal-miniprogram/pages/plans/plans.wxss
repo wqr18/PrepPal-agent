@@ -1,0 +1,19 @@
+.plans__head {
+  padding: 16rpx 4rpx 0;
+}
+
+.plans__seg {
+  margin: 24rpx 0;
+}
+
+.plans__foot {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 14rpx;
+}
+
+.plans__time {
+  font-size: 22rpx;
+  color: var(--pp-ink-3);
+}
